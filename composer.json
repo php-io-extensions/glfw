@@ -1,0 +1,31 @@
+{
+    "name": "php-io-extensions/glfw",
+    "type": "php-ext",
+    "description": "PHP-Controllable GLFW Windowing Extension",
+    "license": "MIT",
+    "version": "0.5.0",
+    "authors": [
+        {
+            "name": "Project Saturn Studios, LLC",
+            "email": "info@projectsaturnstudios.com"
+        }
+    ],
+    "require": {
+        "php": ">=8.2"
+    },
+    "php-ext": {
+        "extension-name": "glfw",
+        "priority": 30,
+        "build-path": "ext",
+        "support-zts": true,
+        "support-nts": true,
+        "os-families-exclude": ["windows"],
+        "configure-options": [
+            {
+                "name": "enable-glfw",
+                "description": "Enable the glfw extension",
+                "needs-value": false
+            }
+        ]
+    }
+}
