@@ -1,4 +1,14 @@
-PHP_ARG_ENABLE(glfw, whether to enable glfw, [ --enable-glfw   Enable Glfw])
+#!/usr/bin/env python3
+"""Rewrite ext/config.m4 for portable GLFW + OpenGL linking (pkg-config / Darwin framework)."""
+
+from __future__ import annotations
+
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+CONFIG_M4 = ROOT / "ext" / "config.m4"
+
+CONFIG = r"""PHP_ARG_ENABLE(glfw, whether to enable glfw, [ --enable-glfw   Enable Glfw])
 
 if test "$PHP_GLFW" = "yes"; then
 
@@ -112,3 +122,15 @@ if test "$PHP_GLFW" = "yes"; then
 	PHP_INSTALL_HEADERS([ext/glfw], [php_GLFW.h])
 
 fi
+"""
+
+
+def main() -> None:
+    if not CONFIG_M4.exists():
+        raise SystemExit(f"missing {CONFIG_M4} — run zephir generate first")
+    CONFIG_M4.write_text(CONFIG, encoding="utf-8")
+    print(f"patched {CONFIG_M4}")
+
+
+if __name__ == "__main__":
+    main()

@@ -11,7 +11,7 @@
 #include "kernel/globals.h"
 
 #define PHP_GLFW_NAME        "glfw"
-#define PHP_GLFW_VERSION     "0.5.0"
+#define PHP_GLFW_VERSION     "0.7.0"
 #define PHP_GLFW_EXTNAME     "glfw"
 #define PHP_GLFW_AUTHOR      "Project Saturn Studios, LLC"
 #define PHP_GLFW_ZEPVERSION  "0.19.0-$Id$"

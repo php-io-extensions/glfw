@@ -140,6 +140,12 @@ All **124** `GLFWAPI` functions from GLFW 3.4 are bound.
 
 ---
 
+## Version
+
+**0.7.0** — ecosystem docs line `0.7.x`. IDE stubs under `ide/0.7.0/`.
+
+Published companion docs (human narrative) live on the ScrapyardIO ecosystem site for **php-io-extensions** / glfw when synced — prefer this repo’s `.okf/` for agent-facing package knowledge.
+
 ## License
 
 MIT — see [LICENSE](LICENSE).

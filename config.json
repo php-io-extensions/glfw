@@ -3,7 +3,7 @@
     "name": "glfw",
     "description": "PHP-Controllable GLFW Windowing Extension",
     "author": "Project Saturn Studios, LLC",
-    "version": "0.5.0",
+    "version": "0.7.0",
     "package-dependencies": {
         "glfw3": ">=3.4.0"
     },
