@@ -1,5 +1,11 @@
 # Directory Update Log
 
+## 2026-08-13
+* **0.7.1 Input scalars**: Package → `0.7.1` (`composer.json`, `config.json`, `PHP_GLFW_VERSION`, `ide/0.7.1/`). `glfwGetCursorX` / `glfwGetCursorY` / `glfwGetGamepadButton` / `glfwGetGamepadAxis` — same leak class as Metal 0.7.5. Poll hot path must not allocate `glfwGetCursorPos` / `glfwGetGamepadState` hashtables. Keep the array APIs for non-hot callers.
+
+## 2026-08-12
+* **Input scalars (draft)**: `glfwGetCursorX` / `glfwGetCursorY` / `glfwGetGamepadButton` / `glfwGetGamepadAxis` — same leak class as Metal 0.7.5. Poll hot path must not allocate `glfwGetCursorPos` / `glfwGetGamepadState` hashtables. Keep the array APIs for non-hot callers.
+
 ## 2026-08-09
 * **Initialization**: Created OKF v0.2 knowledge bundle for `php-io-extensions/glfw` (native Zephir extension), mirroring peer depth from `open-gl/.okf`, `sdl3/.okf`, and `metal/.okf`. Documented orientation, architecture, API surface grounded in `glfw/glfw/**/*.zep`, build/packaging, conventions, traps, and playbooks. Added root `AGENTS.md` and `.gitattributes` (`export-ignore` for `.okf/` + `AGENTS.md`).
 * **Update**: Version signals bumped to **0.7.0** in `composer.json`, `config.json`, and `PHP_GLFW_VERSION` (`ext/php_glfw.h`). README Version section aligned with open-gl peer style (`0.7.x` ecosystem docs line). IDE stub tree at `ide/0.7.0/` (legacy `ide/0.5.0/` removed).

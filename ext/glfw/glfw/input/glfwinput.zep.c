@@ -200,6 +200,48 @@ PHP_METHOD(Glfw_GLFW_Input_GLFWInput, glfwGetCursorPos)
 	RETURN_MM();
 }
 
+/**
+ * Cursor X. Prefer this on the poll hot path (no hashtable).
+ */
+PHP_METHOD(Glfw_GLFW_Input_GLFWInput, glfwGetCursorX)
+{
+	double xpos;
+	zval *window_param = NULL;
+	zend_long window;
+
+	ZEND_PARSE_PARAMETERS_START(1, 1)
+		Z_PARAM_LONG(window)
+	ZEND_PARSE_PARAMETERS_END();
+	zephir_fetch_params_without_memory_grow(1, 0, &window_param);
+	xpos =  (0.0);
+	
+            double y = 0.0;
+            glfwGetCursorPos((GLFWwindow *)(uintptr_t) window, &xpos, &y);
+        
+	RETURN_DOUBLE(xpos);
+}
+
+/**
+ * Cursor Y. Prefer this on the poll hot path (no hashtable).
+ */
+PHP_METHOD(Glfw_GLFW_Input_GLFWInput, glfwGetCursorY)
+{
+	double ypos;
+	zval *window_param = NULL;
+	zend_long window;
+
+	ZEND_PARSE_PARAMETERS_START(1, 1)
+		Z_PARAM_LONG(window)
+	ZEND_PARSE_PARAMETERS_END();
+	zephir_fetch_params_without_memory_grow(1, 0, &window_param);
+	ypos =  (0.0);
+	
+            double x = 0.0;
+            glfwGetCursorPos((GLFWwindow *)(uintptr_t) window, &x, &ypos);
+        
+	RETURN_DOUBLE(ypos);
+}
+
 PHP_METHOD(Glfw_GLFW_Input_GLFWInput, glfwSetCursorPos)
 {
 	double xpos, ypos;
@@ -815,6 +857,61 @@ PHP_METHOD(Glfw_GLFW_Input_GLFWInput, glfwGetGamepadState)
             }
         
 	RETURN_CTOR(&result);
+}
+
+/**
+ * One gamepad button (GLFW_PRESS / GLFW_RELEASE). No hashtable.
+ */
+PHP_METHOD(Glfw_GLFW_Input_GLFWInput, glfwGetGamepadButton)
+{
+	zval *jid_param = NULL, *button_param = NULL;
+	zend_long jid, button, result;
+
+	ZEND_PARSE_PARAMETERS_START(2, 2)
+		Z_PARAM_LONG(jid)
+		Z_PARAM_LONG(button)
+	ZEND_PARSE_PARAMETERS_END();
+	zephir_fetch_params_without_memory_grow(2, 0, &jid_param, &button_param);
+	result = 0;
+	
+            GLFWgamepadstate state;
+            result = 0;
+            if (glfwGetGamepadState((int) jid, &state) == GLFW_TRUE) {
+                int b = (int) button;
+                if (b >= 0 && b < 15) {
+                    result = (zend_long) state.buttons[b];
+                }
+            }
+        
+	RETURN_LONG(result);
+}
+
+/**
+ * One gamepad axis. No hashtable.
+ */
+PHP_METHOD(Glfw_GLFW_Input_GLFWInput, glfwGetGamepadAxis)
+{
+	double result;
+	zval *jid_param = NULL, *axis_param = NULL;
+	zend_long jid, axis;
+
+	ZEND_PARSE_PARAMETERS_START(2, 2)
+		Z_PARAM_LONG(jid)
+		Z_PARAM_LONG(axis)
+	ZEND_PARSE_PARAMETERS_END();
+	zephir_fetch_params_without_memory_grow(2, 0, &jid_param, &axis_param);
+	result =  (0.0);
+	
+            GLFWgamepadstate state;
+            result = 0.0;
+            if (glfwGetGamepadState((int) jid, &state) == GLFW_TRUE) {
+                int a = (int) axis;
+                if (a >= 0 && a < 6) {
+                    result = (double) state.axes[a];
+                }
+            }
+        
+	RETURN_DOUBLE(result);
 }
 
 PHP_METHOD(Glfw_GLFW_Input_GLFWInput, glfwSetClipboardString)

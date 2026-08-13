@@ -11,6 +11,8 @@ PHP_METHOD(Glfw_GLFW_Input_GLFWInput, glfwGetKeyScancode);
 PHP_METHOD(Glfw_GLFW_Input_GLFWInput, glfwGetKey);
 PHP_METHOD(Glfw_GLFW_Input_GLFWInput, glfwGetMouseButton);
 PHP_METHOD(Glfw_GLFW_Input_GLFWInput, glfwGetCursorPos);
+PHP_METHOD(Glfw_GLFW_Input_GLFWInput, glfwGetCursorX);
+PHP_METHOD(Glfw_GLFW_Input_GLFWInput, glfwGetCursorY);
 PHP_METHOD(Glfw_GLFW_Input_GLFWInput, glfwSetCursorPos);
 PHP_METHOD(Glfw_GLFW_Input_GLFWInput, glfwCreateCursor);
 PHP_METHOD(Glfw_GLFW_Input_GLFWInput, glfwCreateStandardCursor);
@@ -37,6 +39,8 @@ PHP_METHOD(Glfw_GLFW_Input_GLFWInput, glfwSetJoystickCallback);
 PHP_METHOD(Glfw_GLFW_Input_GLFWInput, glfwUpdateGamepadMappings);
 PHP_METHOD(Glfw_GLFW_Input_GLFWInput, glfwGetGamepadName);
 PHP_METHOD(Glfw_GLFW_Input_GLFWInput, glfwGetGamepadState);
+PHP_METHOD(Glfw_GLFW_Input_GLFWInput, glfwGetGamepadButton);
+PHP_METHOD(Glfw_GLFW_Input_GLFWInput, glfwGetGamepadAxis);
 PHP_METHOD(Glfw_GLFW_Input_GLFWInput, glfwSetClipboardString);
 PHP_METHOD(Glfw_GLFW_Input_GLFWInput, glfwGetClipboardString);
 PHP_METHOD(Glfw_GLFW_Input_GLFWInput, glfwGetTime);
@@ -79,6 +83,14 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_glfw_glfw_input_glfwinput_glfwge
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_glfw_glfw_input_glfwinput_glfwgetcursorpos, 0, 1, IS_ARRAY, 0)
+	ZEND_ARG_TYPE_INFO(0, window, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_glfw_glfw_input_glfwinput_glfwgetcursorx, 0, 1, IS_DOUBLE, 0)
+	ZEND_ARG_TYPE_INFO(0, window, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_glfw_glfw_input_glfwinput_glfwgetcursory, 0, 1, IS_DOUBLE, 0)
 	ZEND_ARG_TYPE_INFO(0, window, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
@@ -213,6 +225,16 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_glfw_glfw_input_glfwinput_glfwge
 	ZEND_ARG_TYPE_INFO(0, jid, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_glfw_glfw_input_glfwinput_glfwgetgamepadbutton, 0, 2, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, jid, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, button, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_glfw_glfw_input_glfwinput_glfwgetgamepadaxis, 0, 2, IS_DOUBLE, 0)
+	ZEND_ARG_TYPE_INFO(0, jid, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, axis, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_glfw_glfw_input_glfwinput_glfwsetclipboardstring, 0, 2, IS_VOID, 0)
 
 	ZEND_ARG_INFO(0, window)
@@ -246,6 +268,8 @@ ZEPHIR_INIT_FUNCS(glfw_glfw_input_glfwinput_method_entry) {
 	PHP_ME(Glfw_GLFW_Input_GLFWInput, glfwGetKey, arginfo_glfw_glfw_input_glfwinput_glfwgetkey, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	PHP_ME(Glfw_GLFW_Input_GLFWInput, glfwGetMouseButton, arginfo_glfw_glfw_input_glfwinput_glfwgetmousebutton, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	PHP_ME(Glfw_GLFW_Input_GLFWInput, glfwGetCursorPos, arginfo_glfw_glfw_input_glfwinput_glfwgetcursorpos, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	PHP_ME(Glfw_GLFW_Input_GLFWInput, glfwGetCursorX, arginfo_glfw_glfw_input_glfwinput_glfwgetcursorx, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	PHP_ME(Glfw_GLFW_Input_GLFWInput, glfwGetCursorY, arginfo_glfw_glfw_input_glfwinput_glfwgetcursory, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	PHP_ME(Glfw_GLFW_Input_GLFWInput, glfwSetCursorPos, arginfo_glfw_glfw_input_glfwinput_glfwsetcursorpos, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	PHP_ME(Glfw_GLFW_Input_GLFWInput, glfwCreateCursor, arginfo_glfw_glfw_input_glfwinput_glfwcreatecursor, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	PHP_ME(Glfw_GLFW_Input_GLFWInput, glfwCreateStandardCursor, arginfo_glfw_glfw_input_glfwinput_glfwcreatestandardcursor, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
@@ -272,6 +296,8 @@ ZEPHIR_INIT_FUNCS(glfw_glfw_input_glfwinput_method_entry) {
 	PHP_ME(Glfw_GLFW_Input_GLFWInput, glfwUpdateGamepadMappings, arginfo_glfw_glfw_input_glfwinput_glfwupdategamepadmappings, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	PHP_ME(Glfw_GLFW_Input_GLFWInput, glfwGetGamepadName, arginfo_glfw_glfw_input_glfwinput_glfwgetgamepadname, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	PHP_ME(Glfw_GLFW_Input_GLFWInput, glfwGetGamepadState, arginfo_glfw_glfw_input_glfwinput_glfwgetgamepadstate, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	PHP_ME(Glfw_GLFW_Input_GLFWInput, glfwGetGamepadButton, arginfo_glfw_glfw_input_glfwinput_glfwgetgamepadbutton, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	PHP_ME(Glfw_GLFW_Input_GLFWInput, glfwGetGamepadAxis, arginfo_glfw_glfw_input_glfwinput_glfwgetgamepadaxis, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	PHP_ME(Glfw_GLFW_Input_GLFWInput, glfwSetClipboardString, arginfo_glfw_glfw_input_glfwinput_glfwsetclipboardstring, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	PHP_ME(Glfw_GLFW_Input_GLFWInput, glfwGetClipboardString, arginfo_glfw_glfw_input_glfwinput_glfwgetclipboardstring, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	PHP_ME(Glfw_GLFW_Input_GLFWInput, glfwGetTime, arginfo_glfw_glfw_input_glfwinput_glfwgettime, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)

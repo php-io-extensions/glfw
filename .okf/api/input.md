@@ -24,10 +24,10 @@ Input modes, keys/mouse, cursors, drop/scroll callbacks, joystick/gamepad, clipb
 | Area | Examples |
 |------|----------|
 | Modes | `glfwGetInputMode`, `glfwSetInputMode`, `glfwRawMouseMotionSupported` |
-| Keys / mouse | `glfwGetKey*`, `glfwGetMouseButton`, cursor pos set/get |
+| Keys / mouse | `glfwGetKey*`, `glfwGetMouseButton`, cursor pos set/get, **`glfwGetCursorX` / `glfwGetCursorY`** (scalars; no hashtable) |
 | Cursors | `glfwCreateCursor` / `CreateStandardCursor` / `DestroyCursor` / `SetCursor` |
 | Callbacks | key, char, charmods, mouse button, cursor pos/enter, scroll, drop |
-| Joystick / gamepad | present, axes/buttons/hats, name/GUID, mappings, gamepad state |
+| Joystick / gamepad | present, axes/buttons/hats, name/GUID, mappings, gamepad state, **`glfwGetGamepadButton` / `glfwGetGamepadAxis`** (scalars; no hashtable) |
 | Clipboard | `glfwSetClipboardString`, `glfwGetClipboardString` |
 | Time | `glfwGetTime`, `glfwSetTime`, `glfwGetTimerValue`, `glfwGetTimerFrequency` |
 

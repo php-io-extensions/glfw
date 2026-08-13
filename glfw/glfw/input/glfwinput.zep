@@ -115,6 +115,32 @@ class GLFWInput
         return ["xpos": xpos, "ypos": ypos];
     }
 
+    /**
+     * Cursor X. Prefer this on the poll hot path (no hashtable).
+     */
+    public static function glfwGetCursorX(int window) -> double
+    {
+        double xpos = 0.0;
+        %{
+            double y = 0.0;
+            glfwGetCursorPos((GLFWwindow *)(uintptr_t) window, &xpos, &y);
+        }%
+        return xpos;
+    }
+
+    /**
+     * Cursor Y. Prefer this on the poll hot path (no hashtable).
+     */
+    public static function glfwGetCursorY(int window) -> double
+    {
+        double ypos = 0.0;
+        %{
+            double x = 0.0;
+            glfwGetCursorPos((GLFWwindow *)(uintptr_t) window, &x, &ypos);
+        }%
+        return ypos;
+    }
+
     public static function glfwSetCursorPos(int window, double xpos, double ypos) -> void
     {
         %{
@@ -414,6 +440,44 @@ class GLFWInput
                 }
                 add_assoc_zval(&result, "buttons", &buttons);
                 add_assoc_zval(&result, "axes", &axes);
+            }
+        }%
+        return result;
+    }
+
+    /**
+     * One gamepad button (GLFW_PRESS / GLFW_RELEASE). No hashtable.
+     */
+    public static function glfwGetGamepadButton(int jid, int button) -> int
+    {
+        int result = 0;
+        %{
+            GLFWgamepadstate state;
+            result = 0;
+            if (glfwGetGamepadState((int) jid, &state) == GLFW_TRUE) {
+                int b = (int) button;
+                if (b >= 0 && b < 15) {
+                    result = (zend_long) state.buttons[b];
+                }
+            }
+        }%
+        return result;
+    }
+
+    /**
+     * One gamepad axis. No hashtable.
+     */
+    public static function glfwGetGamepadAxis(int jid, int axis) -> double
+    {
+        double result = 0.0;
+        %{
+            GLFWgamepadstate state;
+            result = 0.0;
+            if (glfwGetGamepadState((int) jid, &state) == GLFW_TRUE) {
+                int a = (int) axis;
+                if (a >= 0 && a < 6) {
+                    result = (double) state.axes[a];
+                }
             }
         }%
         return result;
