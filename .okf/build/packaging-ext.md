@@ -28,7 +28,7 @@ PIE/`phpize` builds from the pre-generated C tree under `ext/` (`build-path: ext
 | Artifact | Role |
 |----------|------|
 | `ext/config.m4` | `--enable-glfw`, pkg-config glfw3 ≥ 3.4.0, OpenGL link, GCC 14 demotion |
-| `ext/php_glfw.h` | `PHP_GLFW_VERSION` (`0.7.0`) |
+| `ext/php_glfw.h` | `PHP_GLFW_VERSION` (`0.7.1`) |
 | `ext/glfw/` + kernel | Zephir-generated sources |
 
 # GCC 14 / macOS GL
@@ -37,7 +37,7 @@ PIE/`phpize` builds from the pre-generated C tree under `ext/` (`build-path: ext
 
 # Stubs
 
-`config.json` stubs path: `ide/%version%/%namespace%/`. For 0.7.x use `ide/0.7.0/Glfw/GLFW/` (includes `GL/GLFWGL.php`).[^config]
+`config.json` stubs path: `ide/%version%/%namespace%/`. For 0.7.x use `ide/0.7.1/Glfw/GLFW/` (includes `GL/GLFWGL.php`).[^config]
 
 # Do not commit phpize junk
 

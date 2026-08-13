@@ -37,7 +37,7 @@ bash scripts/prepare-ext.sh
 
 Set `ZEPHIR_BIN` if `zephir` is not on `PATH`. Platform installers remain fine for machine installs.[^install][^readme]
 
-2. Confirm version strings match **0.7.0** in `composer.json`, `config.json`, and `PHP_GLFW_VERSION` in `ext/php_glfw.h`.[^config][^php-h]
+2. Confirm version strings match **0.7.1** in `composer.json`, `config.json`, and `PHP_GLFW_VERSION` in `ext/php_glfw.h`.[^config][^php-h]
 
 3. Verify `ZEPHIR_REGISTER_CLASS` / `class_exists` for all public classes (truncation trap).
 
@@ -48,7 +48,7 @@ php -n -d extension=./ext/modules/glfw.so --ri glfw
 php -n -d extension=./ext/modules/glfw.so examples/proof_of_work.php
 ```
 
-5. Refresh IDE stubs under `ide/0.7.0/` when the public surface changes.
+5. Refresh IDE stubs under `ide/0.7.1/` when the public surface changes.
 
 6. Commit regenerable `ext/` sources + stubs that belong in git — not phpize junk.
 

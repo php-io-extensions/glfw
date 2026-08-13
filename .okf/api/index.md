@@ -1,6 +1,6 @@
 # Public PHP API
 
-All public classes live under `Glfw\GLFW` and expose **static** methods. Opaque GLFW objects are PHP `int` handles. C structs are assoc arrays. Full method names live in `.zep` / `ide/0.7.0/`; concepts below summarize module scope grounded in sources on disk.
+All public classes live under `Glfw\GLFW` and expose **static** methods. Opaque GLFW objects are PHP `int` handles. C structs are assoc arrays. Full method names live in `.zep` / `ide/0.7.1/`; concepts below summarize module scope grounded in sources on disk.
 
 Method counts are `public static function` entries in the named `.zep` files (surface size, not a stability guarantee).
 

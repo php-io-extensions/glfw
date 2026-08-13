@@ -32,7 +32,7 @@ sources:
 |------|--------|
 | Package | `php-io-extensions/glfw` |
 | Extension name | `glfw` |
-| Version | `0.7.0` |
+| Version | `0.7.1` |
 | PHP | `>= 8.2` (ZTS + NTS) |
 | OS | Linux + macOS; Windows excluded |
 | Namespace | `Glfw\GLFW\*` |
@@ -71,7 +71,7 @@ Canonical headless smoke: `examples/proof_of_work.php`.[^demo]
 
 # Public namespace
 
-Zephir classes live under `Glfw\GLFW\` (`glfw/glfw/**/*.zep`). IDE stubs: `ide/0.7.0/Glfw/GLFW/` (including `GL/GLFWGL.php`).
+Zephir classes live under `Glfw\GLFW\` (`glfw/glfw/**/*.zep`). IDE stubs: `ide/0.7.1/Glfw/GLFW/` (including `GL/GLFWGL.php`).
 
 See [Stack segmentation](/orientation/stack-segmentation.md) and [Layered stack](/architecture/stack.md).
 

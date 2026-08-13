@@ -21,9 +21,9 @@ sources:
 | Thin Zephir static classes | sdl3 / open-gl | `Glfw\GLFW\*::*` mirrors C |
 | Opaque int handles | sdl3 / metal | Windows/monitors/cursors as `int` |
 | PIE `type: php-ext`, `build-path: ext` | siblings | Same layout in `composer.json`[^composer] |
-| Version `0.7.0`, PHP ≥ 8.2 | siblings | Aligned release line |
+| Version `0.7.1`, PHP ≥ 8.2 | siblings | Aligned release line |
 | Windows excluded | sdl3 / open-gl | `os-families-exclude: ["windows"]` |
-| IDE stubs path | sdl3 / open-gl | `ide/0.7.0/Glfw/GLFW/` |
+| IDE stubs path | sdl3 / open-gl | `ide/0.7.1/Glfw/GLFW/` |
 | Constants outside ext | open-gl / sdl3 | microscrap / local ints[^readme] |
 
 # Not borrowed
