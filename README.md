@@ -10,6 +10,7 @@ Input is not bound: no keyboard, mouse, cursor, joystick or gamepad functions. F
 - PHP 8.4, NTS or ZTS
 - macOS: `brew install glfw`
 - Debian trixie and Raspberry Pi OS: `apt install libglfw3-dev`
+- `venusian build` reads the system packages from `extra.venusian.system` in composer.json: apt packages to build with and the run-time ones a `.deb` depends on or recommends, and the Homebrew ones.
 
 No Vulkan, X11, Wayland, GLX or EGL headers are needed to build: the extension declares the few Vulkan types and native-access functions it uses with ABI-identical types.
 

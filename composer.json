@@ -30,6 +30,33 @@
     "extra": {
         "branch-alias": {
             "dev-main": "0.10.x-dev"
+        },
+        "venusian": {
+            "system": {
+                "apt": {
+                    "depends": [
+                        "libx11-6",
+                        "libxrandr2",
+                        "libxinerama1",
+                        "libxcursor1",
+                        "libxi6",
+                        "libwayland-client0",
+                        "libwayland-cursor0",
+                        "libwayland-egl1",
+                        "libxkbcommon0",
+                        "libdecor-0-0"
+                    ],
+                    "recommends": [
+                        "libegl1",
+                        "libgl1"
+                    ]
+                },
+                "brew": {
+                    "build": [
+                        "glfw"
+                    ]
+                }
+            }
         }
     },
     "php-ext": {
