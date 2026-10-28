@@ -1,5 +1,11 @@
 # Log
 
+## 2026-10-28
+
+* **Version**: 0.11.0 in `PHP_GLFW_VERSION` (`php_glfw.h`), `AGENTS.md`, README and the index; `branch-alias` `dev-main` is `0.11.x-dev`. Promoted with the Venusian 0.11 ecosystem. No API or behaviour change. Built and loaded on Homebrew PHP 8.4 NTS and ZTS (55 passed, 2 skipped each) and the Pi on 8.4 ZTS. On the Pi `WindowTest` and `CallbackTest` hang at their first visible window, under Wayland and Xwayland alike; the other seven files pass.
+* **Open — Pi hang**: on the Pi `WindowTest` stops at "moves and resizes" and `CallbackTest` at "calls back on move, resize and framebuffer resize", both right after a `GLFW_VISIBLE` window opens; Pest never returns. Not investigated.
+* **Open — GLFW 3.3 hosts**: an x86_64 Ubuntu-family box ships GLFW 3.3.10 (`libglfw3-dev`), so `configure` refuses (`glfw3 >= 3.4`) and 0.7.0 stays installed there.
+
 ## 2026-10-09
 
 
