@@ -51,7 +51,7 @@ it('exposes every function, constant and class the stubs declare', function (): 
 });
 
 it('reports its version', function (): void {
-    expect(phpversion('glfw'))->toBe('0.10.0');
+    expect(phpversion('glfw'))->toBe('0.11.0');
 });
 
 it('carries the header values of its constants', function (): void {

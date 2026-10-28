@@ -10,4 +10,4 @@
 8. **Build.** `./install-macos.sh` into Homebrew `php@8.4` and `php@8.4-zts`. On the Pi, copy the tree with `fnk` and `./install-debian-trixie.sh`. Pest at `-d memory_limit=128M`. On the Pi export `WAYLAND_DISPLAY=wayland-0 DISPLAY=:0 XDG_RUNTIME_DIR=/run/user/$(id -u)`, and leave ext-gtk out of the run (GTK 3 libdecor + GTK 4 deadlock). Gate a commit on the suite's exit code.
 9. **Platform facts are tested, not skipped.** Where GLFW answers `GLFW_FEATURE_UNAVAILABLE` (Wayland position/opacity/icon/gamma, macOS icon), the test asserts that code.
 10. **Durable facts go in `.okf`.** Update the matching concept and append `.okf/log.md`.
-11. **Version** is `PHP_GLFW_VERSION` in `php_glfw.h`: 0.10.0. `os-families`: linux, darwin.
+11. **Version** is `PHP_GLFW_VERSION` in `php_glfw.h`: 0.11.0. `os-families`: linux, darwin.

@@ -2,7 +2,7 @@
 
 [![CI](https://img.shields.io/github/actions/workflow/status/php-io-extensions/glfw/ci.yml?style=flat-square&label=CI)](https://github.com/php-io-extensions/glfw/actions/workflows/ci.yml)
 
-1:1 PHP bindings of GLFW 3.4 for staged windows: initialization and errors, monitors, video modes and gamma, windows with their hints, attributes and callbacks, events and time, OpenGL contexts, Vulkan surfaces, and native handles. Version 0.10.0. Linux and macOS.
+1:1 PHP bindings of GLFW 3.4 for staged windows: initialization and errors, monitors, video modes and gamma, windows with their hints, attributes and callbacks, events and time, OpenGL contexts, Vulkan surfaces, and native handles. Version 0.11.0. Linux and macOS.
 
 Input is not bound: no keyboard, mouse, cursor, joystick or gamepad functions. Function and constant names are the C names. A handle is one PHP object per native pointer. Dropping the last PHP reference does not destroy the native object.
 
@@ -12,8 +12,6 @@ Input is not bound: no keyboard, mouse, cursor, joystick or gamepad functions. F
 - PHP 8.4, NTS or ZTS
 - macOS: `brew install glfw`
 - Debian trixie and Raspberry Pi OS: `apt install libglfw3-dev`
-- `venusian build` reads the system packages from `extra.venusian.system` in composer.json: apt packages to build with and the run-time ones a `.deb` depends on or recommends, and the Homebrew ones.
-
 No Vulkan, X11, Wayland, GLX or EGL headers are needed to build: the extension declares the few Vulkan types and native-access functions it uses with ABI-identical types.
 
 ## Install
