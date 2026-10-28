@@ -1,6 +1,7 @@
 # glfw
 
 [![CI](https://img.shields.io/github/actions/workflow/status/php-io-extensions/glfw/ci.yml?style=flat-square&label=CI)](https://github.com/php-io-extensions/glfw/actions/workflows/ci.yml)
+[![GLFW API](https://img.shields.io/badge/GLFW_API-66.4%25_%2899%2F149%29-blue?style=flat-square)](SUPPORT.md)
 
 1:1 PHP bindings of GLFW 3.4 for staged windows: initialization and errors, monitors, video modes and gamma, windows with their hints, attributes and callbacks, events and time, OpenGL contexts, Vulkan surfaces, and native handles. Version 0.11.0. Linux and macOS.
 
@@ -100,6 +101,17 @@ GLFW's own, reported through `glfwGetError()`:
 - **Wayland decorations** come from libdecor's GTK 3 plugin by default. In a process that has also loaded GTK 4 (ext-gtk), GTK 3's type registration deadlocks in `glfwShowWindow`; set `glfwInitHint(GLFW_WAYLAND_LIBDECOR, GLFW_WAYLAND_DISABLE_LIBDECOR)` before `glfwInit()` there.
 - **macOS** has no window icon (`GLFW_FEATURE_UNAVAILABLE`), reports the current video mode in points and lists modes in pixels, and counts `GLFW_POSITION_Y` from the screen's bottom in GLFW 3.4.0.
 - **Focus** is granted by the window manager: macOS refuses activation while the user works in another app, and Wayland compositors give focus on user input.
+
+## Coverage
+
+[SUPPORT.md](SUPPORT.md) lists every function GLFW 3.4, the floor this extension builds against,
+declares in `glfw3.h` and `glfw3native.h`, input included, each marked bound or not; the API badge
+is computed from it. Regenerate both after a binding change, and check them:
+
+```bash
+php84 scripts/support.php           # writes SUPPORT.md and the badge
+php84 scripts/support.php --check   # exits 1 when either is stale
+```
 
 ## Tests
 

@@ -5,6 +5,7 @@
 * **Version**: 0.11.0 in `PHP_GLFW_VERSION` (`php_glfw.h`), `AGENTS.md`, README and the index; `branch-alias` `dev-main` is `0.11.x-dev`. Promoted with the Venusian 0.11 ecosystem. No API or behaviour change. Built and loaded on Homebrew PHP 8.4 NTS and ZTS (55 passed, 2 skipped each) and the Pi on 8.4 ZTS. On the Pi `WindowTest` and `CallbackTest` hang at their first visible window, under Wayland and Xwayland alike; the other seven files pass.
 * **Open — Pi hang**: on the Pi `WindowTest` stops at "moves and resizes" and `CallbackTest` at "calls back on move, resize and framebuffer resize", both right after a `GLFW_VISIBLE` window opens; Pest never returns. Not investigated.
 * **Open — GLFW 3.3 hosts**: an x86_64 Ubuntu-family box ships GLFW 3.3.10 (`libglfw3-dev`), so `configure` refuses (`glfw3 >= 3.4`) and 0.7.0 stays installed there.
+* **Coverage**: `scripts/support.php` writes `SUPPORT.md` and the README's API badge: every `GLFWAPI` function of `glfw3.h` and `glfw3native.h` at the GLFW 3.4 tag (the floor), input included, bound when a stub declares the function of the same name. Headers download once into `scripts/.support-cache/` (gitignored); `--check` exits 1 when the list or badge is stale. 99 / 149 (66.4%).
 
 ## 2026-10-09
 
