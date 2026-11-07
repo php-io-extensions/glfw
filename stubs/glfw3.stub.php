@@ -674,14 +674,838 @@ const GLFW_CONNECTED = UNKNOWN;
  */
 const GLFW_DISCONNECTED = UNKNOWN;
 
+/**
+ * @var int
+ * @cvalue GLFW_RELEASE
+ */
+const GLFW_RELEASE = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_PRESS
+ */
+const GLFW_PRESS = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_REPEAT
+ */
+const GLFW_REPEAT = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_UNKNOWN
+ */
+const GLFW_KEY_UNKNOWN = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_SPACE
+ */
+const GLFW_KEY_SPACE = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_APOSTROPHE
+ */
+const GLFW_KEY_APOSTROPHE = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_COMMA
+ */
+const GLFW_KEY_COMMA = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_MINUS
+ */
+const GLFW_KEY_MINUS = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_PERIOD
+ */
+const GLFW_KEY_PERIOD = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_SLASH
+ */
+const GLFW_KEY_SLASH = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_0
+ */
+const GLFW_KEY_0 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_1
+ */
+const GLFW_KEY_1 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_2
+ */
+const GLFW_KEY_2 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_3
+ */
+const GLFW_KEY_3 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_4
+ */
+const GLFW_KEY_4 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_5
+ */
+const GLFW_KEY_5 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_6
+ */
+const GLFW_KEY_6 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_7
+ */
+const GLFW_KEY_7 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_8
+ */
+const GLFW_KEY_8 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_9
+ */
+const GLFW_KEY_9 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_SEMICOLON
+ */
+const GLFW_KEY_SEMICOLON = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_EQUAL
+ */
+const GLFW_KEY_EQUAL = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_A
+ */
+const GLFW_KEY_A = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_B
+ */
+const GLFW_KEY_B = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_C
+ */
+const GLFW_KEY_C = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_D
+ */
+const GLFW_KEY_D = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_E
+ */
+const GLFW_KEY_E = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_F
+ */
+const GLFW_KEY_F = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_G
+ */
+const GLFW_KEY_G = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_H
+ */
+const GLFW_KEY_H = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_I
+ */
+const GLFW_KEY_I = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_J
+ */
+const GLFW_KEY_J = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_K
+ */
+const GLFW_KEY_K = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_L
+ */
+const GLFW_KEY_L = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_M
+ */
+const GLFW_KEY_M = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_N
+ */
+const GLFW_KEY_N = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_O
+ */
+const GLFW_KEY_O = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_P
+ */
+const GLFW_KEY_P = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_Q
+ */
+const GLFW_KEY_Q = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_R
+ */
+const GLFW_KEY_R = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_S
+ */
+const GLFW_KEY_S = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_T
+ */
+const GLFW_KEY_T = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_U
+ */
+const GLFW_KEY_U = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_V
+ */
+const GLFW_KEY_V = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_W
+ */
+const GLFW_KEY_W = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_X
+ */
+const GLFW_KEY_X = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_Y
+ */
+const GLFW_KEY_Y = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_Z
+ */
+const GLFW_KEY_Z = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_LEFT_BRACKET
+ */
+const GLFW_KEY_LEFT_BRACKET = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_BACKSLASH
+ */
+const GLFW_KEY_BACKSLASH = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_RIGHT_BRACKET
+ */
+const GLFW_KEY_RIGHT_BRACKET = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_GRAVE_ACCENT
+ */
+const GLFW_KEY_GRAVE_ACCENT = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_WORLD_1
+ */
+const GLFW_KEY_WORLD_1 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_WORLD_2
+ */
+const GLFW_KEY_WORLD_2 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_ESCAPE
+ */
+const GLFW_KEY_ESCAPE = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_ENTER
+ */
+const GLFW_KEY_ENTER = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_TAB
+ */
+const GLFW_KEY_TAB = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_BACKSPACE
+ */
+const GLFW_KEY_BACKSPACE = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_INSERT
+ */
+const GLFW_KEY_INSERT = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_DELETE
+ */
+const GLFW_KEY_DELETE = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_RIGHT
+ */
+const GLFW_KEY_RIGHT = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_LEFT
+ */
+const GLFW_KEY_LEFT = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_DOWN
+ */
+const GLFW_KEY_DOWN = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_UP
+ */
+const GLFW_KEY_UP = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_PAGE_UP
+ */
+const GLFW_KEY_PAGE_UP = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_PAGE_DOWN
+ */
+const GLFW_KEY_PAGE_DOWN = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_HOME
+ */
+const GLFW_KEY_HOME = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_END
+ */
+const GLFW_KEY_END = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_CAPS_LOCK
+ */
+const GLFW_KEY_CAPS_LOCK = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_SCROLL_LOCK
+ */
+const GLFW_KEY_SCROLL_LOCK = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_NUM_LOCK
+ */
+const GLFW_KEY_NUM_LOCK = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_PRINT_SCREEN
+ */
+const GLFW_KEY_PRINT_SCREEN = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_PAUSE
+ */
+const GLFW_KEY_PAUSE = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_F1
+ */
+const GLFW_KEY_F1 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_F2
+ */
+const GLFW_KEY_F2 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_F3
+ */
+const GLFW_KEY_F3 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_F4
+ */
+const GLFW_KEY_F4 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_F5
+ */
+const GLFW_KEY_F5 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_F6
+ */
+const GLFW_KEY_F6 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_F7
+ */
+const GLFW_KEY_F7 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_F8
+ */
+const GLFW_KEY_F8 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_F9
+ */
+const GLFW_KEY_F9 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_F10
+ */
+const GLFW_KEY_F10 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_F11
+ */
+const GLFW_KEY_F11 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_F12
+ */
+const GLFW_KEY_F12 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_F13
+ */
+const GLFW_KEY_F13 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_F14
+ */
+const GLFW_KEY_F14 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_F15
+ */
+const GLFW_KEY_F15 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_F16
+ */
+const GLFW_KEY_F16 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_F17
+ */
+const GLFW_KEY_F17 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_F18
+ */
+const GLFW_KEY_F18 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_F19
+ */
+const GLFW_KEY_F19 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_F20
+ */
+const GLFW_KEY_F20 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_F21
+ */
+const GLFW_KEY_F21 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_F22
+ */
+const GLFW_KEY_F22 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_F23
+ */
+const GLFW_KEY_F23 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_F24
+ */
+const GLFW_KEY_F24 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_F25
+ */
+const GLFW_KEY_F25 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_KP_0
+ */
+const GLFW_KEY_KP_0 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_KP_1
+ */
+const GLFW_KEY_KP_1 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_KP_2
+ */
+const GLFW_KEY_KP_2 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_KP_3
+ */
+const GLFW_KEY_KP_3 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_KP_4
+ */
+const GLFW_KEY_KP_4 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_KP_5
+ */
+const GLFW_KEY_KP_5 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_KP_6
+ */
+const GLFW_KEY_KP_6 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_KP_7
+ */
+const GLFW_KEY_KP_7 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_KP_8
+ */
+const GLFW_KEY_KP_8 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_KP_9
+ */
+const GLFW_KEY_KP_9 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_KP_DECIMAL
+ */
+const GLFW_KEY_KP_DECIMAL = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_KP_DIVIDE
+ */
+const GLFW_KEY_KP_DIVIDE = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_KP_MULTIPLY
+ */
+const GLFW_KEY_KP_MULTIPLY = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_KP_SUBTRACT
+ */
+const GLFW_KEY_KP_SUBTRACT = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_KP_ADD
+ */
+const GLFW_KEY_KP_ADD = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_KP_ENTER
+ */
+const GLFW_KEY_KP_ENTER = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_KP_EQUAL
+ */
+const GLFW_KEY_KP_EQUAL = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_LEFT_SHIFT
+ */
+const GLFW_KEY_LEFT_SHIFT = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_LEFT_CONTROL
+ */
+const GLFW_KEY_LEFT_CONTROL = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_LEFT_ALT
+ */
+const GLFW_KEY_LEFT_ALT = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_LEFT_SUPER
+ */
+const GLFW_KEY_LEFT_SUPER = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_RIGHT_SHIFT
+ */
+const GLFW_KEY_RIGHT_SHIFT = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_RIGHT_CONTROL
+ */
+const GLFW_KEY_RIGHT_CONTROL = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_RIGHT_ALT
+ */
+const GLFW_KEY_RIGHT_ALT = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_RIGHT_SUPER
+ */
+const GLFW_KEY_RIGHT_SUPER = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_MENU
+ */
+const GLFW_KEY_MENU = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_KEY_LAST
+ */
+const GLFW_KEY_LAST = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_MOD_SHIFT
+ */
+const GLFW_MOD_SHIFT = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_MOD_CONTROL
+ */
+const GLFW_MOD_CONTROL = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_MOD_ALT
+ */
+const GLFW_MOD_ALT = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_MOD_SUPER
+ */
+const GLFW_MOD_SUPER = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_MOUSE_BUTTON_1
+ */
+const GLFW_MOUSE_BUTTON_1 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_MOUSE_BUTTON_2
+ */
+const GLFW_MOUSE_BUTTON_2 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_MOUSE_BUTTON_3
+ */
+const GLFW_MOUSE_BUTTON_3 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_MOUSE_BUTTON_4
+ */
+const GLFW_MOUSE_BUTTON_4 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_MOUSE_BUTTON_5
+ */
+const GLFW_MOUSE_BUTTON_5 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_MOUSE_BUTTON_6
+ */
+const GLFW_MOUSE_BUTTON_6 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_MOUSE_BUTTON_7
+ */
+const GLFW_MOUSE_BUTTON_7 = UNKNOWN;
+
+/**
+ * @var int
+ * @cvalue GLFW_MOUSE_BUTTON_8
+ */
+const GLFW_MOUSE_BUTTON_8 = UNKNOWN;
+
 /** A window, and its OpenGL or OpenGL ES context when it has one. Made by glfwCreateWindow(). */
 final class GLFWwindow
 {
     private function __construct() {}
 
+    /** The GLFWwindow* address; 0 once the window is destroyed. */
     public function pointer(): int {}
 
-    public static function fromPointer(int $pointer): static {}
+    /** The window at a GLFWwindow* address; null for 0. */
+    public static function fromPointer(int $pointer): ?static {}
 }
 
 /** A monitor GLFW reports: from glfwGetMonitors(), glfwGetPrimaryMonitor() or glfwGetWindowMonitor(). */
@@ -689,9 +1513,11 @@ final class GLFWmonitor
 {
     private function __construct() {}
 
+    /** The GLFWmonitor* address; 0 once the monitor is disconnected. */
     public function pointer(): int {}
 
-    public static function fromPointer(int $pointer): static {}
+    /** The monitor at a GLFWmonitor* address; null for 0. */
+    public static function fromPointer(int $pointer): ?static {}
 }
 
 /** GLFWvidmode: one mode a monitor can run. */
@@ -710,7 +1536,7 @@ final class GLFWvidmode
     public int $refreshRate = 0;
 }
 
-/** GLFWgammaramp: one list of 16-bit values per channel, all the same length. */
+/** GLFWgammaramp: one list of 16-bit values per channel, all the same length (the C struct's size). */
 final class GLFWgammaramp
 {
     /** @var list<int> */
@@ -739,7 +1565,8 @@ final class GLFWimage
 
 /* Initialization, version and error */
 
-function glfwInit(): bool {}
+/** GLFW_TRUE or GLFW_FALSE. */
+function glfwInit(): int {}
 
 function glfwTerminate(): void {}
 
@@ -752,12 +1579,16 @@ function glfwGetVersionString(): string {}
 /** The last error code (GLFW_NO_ERROR when none), cleared by the call; $description gets its text or null. */
 function glfwGetError(?string &$description = null): int {}
 
-/** @param callable|null $callback called as $callback(int $errorCode, string $description) */
-function glfwSetErrorCallback(?callable $callback): void {}
+/**
+ * @param callable|null $callback called as $callback(int $errorCode, string $description)
+ * @return callable|null the callback this one replaces
+ */
+function glfwSetErrorCallback(?callable $callback): ?callable {}
 
 function glfwGetPlatform(): int {}
 
-function glfwPlatformSupported(int $platform): bool {}
+/** GLFW_TRUE or GLFW_FALSE. */
+function glfwPlatformSupported(int $platform): int {}
 
 /* Monitors */
 
@@ -777,8 +1608,11 @@ function glfwGetMonitorContentScale(GLFWmonitor $monitor, ?float &$xscale, ?floa
 
 function glfwGetMonitorName(GLFWmonitor $monitor): ?string {}
 
-/** @param callable|null $callback called as $callback(GLFWmonitor $monitor, int $event) with GLFW_CONNECTED or GLFW_DISCONNECTED */
-function glfwSetMonitorCallback(?callable $callback): void {}
+/**
+ * @param callable|null $callback called as $callback(GLFWmonitor $monitor, int $event) with GLFW_CONNECTED or GLFW_DISCONNECTED
+ * @return callable|null the callback this one replaces
+ */
+function glfwSetMonitorCallback(?callable $callback): ?callable {}
 
 /** @return list<GLFWvidmode> ascending, by bit depth then resolution */
 function glfwGetVideoModes(GLFWmonitor $monitor): array {}
@@ -802,18 +1636,24 @@ function glfwWindowHintString(int $hint, string $value): void {}
 /** null when GLFW cannot make it (glfwGetError() says why). A monitor makes it full screen on that monitor. */
 function glfwCreateWindow(int $width, int $height, string $title, ?GLFWmonitor $monitor = null, ?GLFWwindow $share = null): ?GLFWwindow {}
 
+/** A window already destroyed passes to GLFW as NULL, which destroys nothing. */
 function glfwDestroyWindow(GLFWwindow $window): void {}
 
-function glfwWindowShouldClose(GLFWwindow $window): bool {}
+/** GLFW_TRUE or GLFW_FALSE. */
+function glfwWindowShouldClose(GLFWwindow $window): int {}
 
-function glfwSetWindowShouldClose(GLFWwindow $window, bool $value): void {}
+/** $value: GLFW_TRUE or GLFW_FALSE. */
+function glfwSetWindowShouldClose(GLFWwindow $window, int $value): void {}
 
 function glfwGetWindowTitle(GLFWwindow $window): ?string {}
 
 function glfwSetWindowTitle(GLFWwindow $window, string $title): void {}
 
-/** $images: a list of GLFWimage, the candidate icon sizes; an empty list restores the default. */
-function glfwSetWindowIcon(GLFWwindow $window, array $images): void {}
+/**
+ * $images: a list of GLFWimage, the candidate icon sizes, of which GLFW reads the first $count;
+ * $count 0 restores the default.
+ */
+function glfwSetWindowIcon(GLFWwindow $window, int $count, array $images): void {}
 
 function glfwGetWindowPos(GLFWwindow $window, ?int &$xpos, ?int &$ypos): void {}
 
@@ -866,32 +1706,60 @@ function glfwGetWindowAttrib(GLFWwindow $window, int $attrib): int {}
 
 function glfwSetWindowAttrib(GLFWwindow $window, int $attrib, int $value): void {}
 
+/* Each glfwSet*Callback returns the callback it replaces, null when there was none. */
+
 /** @param callable|null $callback called as $callback(GLFWwindow $window, int $xpos, int $ypos) */
-function glfwSetWindowPosCallback(GLFWwindow $window, ?callable $callback): void {}
+function glfwSetWindowPosCallback(GLFWwindow $window, ?callable $callback): ?callable {}
 
 /** @param callable|null $callback called as $callback(GLFWwindow $window, int $width, int $height) */
-function glfwSetWindowSizeCallback(GLFWwindow $window, ?callable $callback): void {}
+function glfwSetWindowSizeCallback(GLFWwindow $window, ?callable $callback): ?callable {}
 
 /** @param callable|null $callback called as $callback(GLFWwindow $window) */
-function glfwSetWindowCloseCallback(GLFWwindow $window, ?callable $callback): void {}
+function glfwSetWindowCloseCallback(GLFWwindow $window, ?callable $callback): ?callable {}
 
 /** @param callable|null $callback called as $callback(GLFWwindow $window) */
-function glfwSetWindowRefreshCallback(GLFWwindow $window, ?callable $callback): void {}
+function glfwSetWindowRefreshCallback(GLFWwindow $window, ?callable $callback): ?callable {}
 
-/** @param callable|null $callback called as $callback(GLFWwindow $window, bool $focused) */
-function glfwSetWindowFocusCallback(GLFWwindow $window, ?callable $callback): void {}
+/** @param callable|null $callback called as $callback(GLFWwindow $window, int $focused) with GLFW_TRUE or GLFW_FALSE */
+function glfwSetWindowFocusCallback(GLFWwindow $window, ?callable $callback): ?callable {}
 
-/** @param callable|null $callback called as $callback(GLFWwindow $window, bool $iconified) */
-function glfwSetWindowIconifyCallback(GLFWwindow $window, ?callable $callback): void {}
+/** @param callable|null $callback called as $callback(GLFWwindow $window, int $iconified) with GLFW_TRUE or GLFW_FALSE */
+function glfwSetWindowIconifyCallback(GLFWwindow $window, ?callable $callback): ?callable {}
 
-/** @param callable|null $callback called as $callback(GLFWwindow $window, bool $maximized) */
-function glfwSetWindowMaximizeCallback(GLFWwindow $window, ?callable $callback): void {}
+/** @param callable|null $callback called as $callback(GLFWwindow $window, int $maximized) with GLFW_TRUE or GLFW_FALSE */
+function glfwSetWindowMaximizeCallback(GLFWwindow $window, ?callable $callback): ?callable {}
 
 /** @param callable|null $callback called as $callback(GLFWwindow $window, int $width, int $height) */
-function glfwSetFramebufferSizeCallback(GLFWwindow $window, ?callable $callback): void {}
+function glfwSetFramebufferSizeCallback(GLFWwindow $window, ?callable $callback): ?callable {}
 
 /** @param callable|null $callback called as $callback(GLFWwindow $window, float $xscale, float $yscale) */
-function glfwSetWindowContentScaleCallback(GLFWwindow $window, ?callable $callback): void {}
+function glfwSetWindowContentScaleCallback(GLFWwindow $window, ?callable $callback): ?callable {}
+
+/** @param callable|null $callback called as $callback(GLFWwindow $window, int $key, int $scancode, int $action, int $mods) with GLFW_PRESS, GLFW_RELEASE or GLFW_REPEAT */
+function glfwSetKeyCallback(GLFWwindow $window, ?callable $callback): ?callable {}
+
+/** @param callable|null $callback called as $callback(GLFWwindow $window, int $codepoint), a Unicode code point */
+function glfwSetCharCallback(GLFWwindow $window, ?callable $callback): ?callable {}
+
+/** @param callable|null $callback called as $callback(GLFWwindow $window, int $button, int $action, int $mods) with GLFW_PRESS or GLFW_RELEASE */
+function glfwSetMouseButtonCallback(GLFWwindow $window, ?callable $callback): ?callable {}
+
+/** @param callable|null $callback called as $callback(GLFWwindow $window, float $xpos, float $ypos) */
+function glfwSetCursorPosCallback(GLFWwindow $window, ?callable $callback): ?callable {}
+
+/** @param callable|null $callback called as $callback(GLFWwindow $window, int $entered), GLFW_TRUE or GLFW_FALSE */
+function glfwSetCursorEnterCallback(GLFWwindow $window, ?callable $callback): ?callable {}
+
+/** @param callable|null $callback called as $callback(GLFWwindow $window, float $xoffset, float $yoffset) */
+function glfwSetScrollCallback(GLFWwindow $window, ?callable $callback): ?callable {}
+
+/** The layout's name for a printable key, null for a key with none. */
+function glfwGetKeyName(int $key, int $scancode): ?string {}
+
+function glfwGetCursorPos(GLFWwindow $window, ?float &$xpos, ?float &$ypos): void {}
+
+/** GLFW_PRESS or GLFW_RELEASE: the last state reported for the key to the window (GLFW_REPEAT is only ever a key callback's). */
+function glfwGetKey(GLFWwindow $window, int $key): int {}
 
 /* Events and time */
 
@@ -922,7 +1790,8 @@ function glfwSwapBuffers(GLFWwindow $window): void {}
 /** 0 = present at once (vsync off), 1 = one vertical blank (vsync on); needs a current context. */
 function glfwSwapInterval(int $interval): void {}
 
-function glfwExtensionSupported(string $extension): bool {}
+/** GLFW_TRUE or GLFW_FALSE. */
+function glfwExtensionSupported(string $extension): int {}
 
 /** The address of a GL function, 0 when the current context has none. */
 function glfwGetProcAddress(string $procname): int {}
@@ -936,12 +1805,14 @@ function glfwGetProcAddress(string $procname): int {}
  */
 function glfwInitVulkanLoader(int $loader): void {}
 
-function glfwVulkanSupported(): bool {}
+/** GLFW_TRUE or GLFW_FALSE. */
+function glfwVulkanSupported(): int {}
 
 /** @return list<string> the instance extensions a surface needs; empty when Vulkan is unavailable */
 function glfwGetRequiredInstanceExtensions(): array {}
 
-function glfwGetPhysicalDevicePresentationSupport(int $instance, int $device, int $queuefamily): bool {}
+/** GLFW_TRUE or GLFW_FALSE. */
+function glfwGetPhysicalDevicePresentationSupport(int $instance, int $device, int $queuefamily): int {}
 
 /** vkGetInstanceProcAddr through GLFW's loader: a function address, 0 when there is none. */
 function glfwGetInstanceProcAddress(int $instance, string $procname): int {}

@@ -41,7 +41,7 @@ it('calls back on focus', function (): void {
     // Hidden until the callback is set: a window shown at creation takes focus before anyone listens.
     $window = hiddenWindow(300, 200);
     $events = [];
-    glfwSetWindowFocusCallback($window, function (GLFWwindow $w, bool $focused) use (&$events): void { $events[] = $focused; });
+    glfwSetWindowFocusCallback($window, function (GLFWwindow $w, int $focused) use (&$events): void { $events[] = $focused; });
 
     glfwShowWindow($window);
     glfwFocusWindow($window);
@@ -51,7 +51,7 @@ it('calls back on focus', function (): void {
     }
     pumpUntil(function () use (&$events): bool { return $events !== []; }, 2.0);
 
-    expect($events)->toContain(true);
+    expect($events)->toContain(GLFW_TRUE);
 
     glfwDestroyWindow($window);
 });
@@ -59,8 +59,8 @@ it('calls back on focus', function (): void {
 it('calls back on iconify and maximize', function (): void {
     $window = hiddenWindow(300, 200, [GLFW_VISIBLE => GLFW_TRUE]);
     $events = [];
-    glfwSetWindowIconifyCallback($window, function (GLFWwindow $w, bool $iconified) use (&$events): void { $events[] = ['iconify', $iconified]; });
-    glfwSetWindowMaximizeCallback($window, function (GLFWwindow $w, bool $maximized) use (&$events): void { $events[] = ['maximize', $maximized]; });
+    glfwSetWindowIconifyCallback($window, function (GLFWwindow $w, int $iconified) use (&$events): void { $events[] = ['iconify', $iconified]; });
+    glfwSetWindowMaximizeCallback($window, function (GLFWwindow $w, int $maximized) use (&$events): void { $events[] = ['maximize', $maximized]; });
     pumpFor(0.2);
 
     // Each step waits for its own event: Dock animations take longer while earlier ones still run.
@@ -70,14 +70,14 @@ it('calls back on iconify and maximize', function (): void {
     // Wayland never tells a client it was iconified: only maximize calls back there.
     if (! onWayland()) {
         glfwIconifyWindow($window);
-        expect(pumpUntil($saw(['iconify', true]), 5.0))->toBeTrue('no iconify callback');
+        expect(pumpUntil($saw(['iconify', GLFW_TRUE]), 5.0))->toBeTrue('no iconify callback');
 
         glfwRestoreWindow($window);
-        expect(pumpUntil($saw(['iconify', false]), 5.0))->toBeTrue('no restore callback');
+        expect(pumpUntil($saw(['iconify', GLFW_FALSE]), 5.0))->toBeTrue('no restore callback');
     }
 
     glfwMaximizeWindow($window);
-    expect(pumpUntil($saw(['maximize', true]), 5.0))->toBeTrue('no maximize callback');
+    expect(pumpUntil($saw(['maximize', GLFW_TRUE]), 5.0))->toBeTrue('no maximize callback');
 
     glfwDestroyWindow($window);
 });
@@ -98,15 +98,20 @@ it('calls back when the window is asked to close and when it needs redrawing', f
 
     expect($calls)->toContain('refresh')
         ->and($calls)->toContain('close')
-        ->and(glfwWindowShouldClose($window))->toBeTrue();
+        ->and(glfwWindowShouldClose($window))->toBe(GLFW_TRUE);
 
     glfwDestroyWindow($window);
 });
 
-it('stores and clears the content-scale callback', function (): void {
+it('stores and clears the content-scale callback, returning the one it replaces', function (): void {
     $window = hiddenWindow();
-    glfwSetWindowContentScaleCallback($window, function (GLFWwindow $w, float $x, float $y): void {});
-    glfwSetWindowContentScaleCallback($window, null);
+    $first = function (GLFWwindow $w, float $x, float $y): void {};
+    $second = function (GLFWwindow $w, float $x, float $y): void {};
+
+    expect(glfwSetWindowContentScaleCallback($window, $first))->toBeNull()
+        ->and(glfwSetWindowContentScaleCallback($window, $second))->toBe($first)
+        ->and(glfwSetWindowContentScaleCallback($window, null))->toBe($second)
+        ->and(glfwSetWindowContentScaleCallback($window, null))->toBeNull();
 
     expect(fn () => glfwSetWindowContentScaleCallback($window, 'no such function'))->toThrow(TypeError::class, 'must be a valid callback or null');
 

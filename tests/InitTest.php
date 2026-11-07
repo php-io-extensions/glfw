@@ -20,12 +20,12 @@ it('names the platform it chose, and the ones it was built for', function (): vo
     glfw();
     $platform = glfwGetPlatform();
 
-    expect(glfwPlatformSupported(GLFW_PLATFORM_NULL))->toBeTrue()
-        ->and(glfwPlatformSupported($platform))->toBeTrue();
+    expect(glfwPlatformSupported(GLFW_PLATFORM_NULL))->toBe(GLFW_TRUE)
+        ->and(glfwPlatformSupported($platform))->toBe(GLFW_TRUE);
 
     if (PHP_OS_FAMILY === 'Darwin') {
         expect($platform)->toBe(GLFW_PLATFORM_COCOA)
-            ->and(glfwPlatformSupported(GLFW_PLATFORM_X11))->toBeFalse();
+            ->and(glfwPlatformSupported(GLFW_PLATFORM_X11))->toBe(GLFW_FALSE);
     } else {
         expect($platform)->toBeIn([GLFW_PLATFORM_WAYLAND, GLFW_PLATFORM_X11]);
     }
@@ -49,11 +49,13 @@ it('hands each error to the callback and keeps the last for glfwGetError()', fun
         ->and($cleared)->toBeNull();
 });
 
-it('stops calling back once the callback is cleared', function (): void {
+it('stops calling back once the callback is cleared, and returns the callback it replaces', function (): void {
     glfw();
     $calls = 0;
-    glfwSetErrorCallback(function () use (&$calls): void { $calls++; });
-    glfwSetErrorCallback(null);
+    $first = function () use (&$calls): void { $calls++; };
+
+    expect(glfwSetErrorCallback($first))->toBeNull()
+        ->and(glfwSetErrorCallback(null))->toBe($first);
 
     glfwWindowHint(0x7FFF0000, 1);
 

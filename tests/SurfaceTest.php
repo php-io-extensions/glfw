@@ -47,11 +47,11 @@ it('exposes every function, constant and class the stubs declare', function (): 
         expect(class_exists($class))->toBeTrue("{$class} is missing");
     }
 
-    expect(count($declared['functions']))->toBe(PHP_OS_FAMILY === 'Darwin' ? 87 : 95);
+    expect(count($declared['functions']))->toBe(PHP_OS_FAMILY === 'Darwin' ? 96 : 104);
 });
 
 it('reports its version', function (): void {
-    expect(phpversion('glfw'))->toBe('0.11.0');
+    expect(phpversion('glfw'))->toBe('0.11.1');
 });
 
 it('carries the header values of its constants', function (): void {

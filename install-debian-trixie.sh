@@ -166,7 +166,8 @@ fi
 export PKG_CONFIG_PATH="/usr/lib/$(gcc -dumpmachine)/pkgconfig"
 export CFLAGS="-I/usr/include${CFLAGS:+ $CFLAGS}"
 export LDFLAGS="-L$(pkg-config --variable=libdir glfw3)${LDFLAGS:+ $LDFLAGS}"
-if ! ./configure --enable-glfw "--with-php-config=${RESOLVED_PHP_CONFIG}" >>"$LOG_FILE" 2>&1; then
+# GLFW_CONFIGURE="--enable-glfw-probes" makes a probe build (tests/Probes); never ship one.
+if ! ./configure --enable-glfw ${GLFW_CONFIGURE:-} "--with-php-config=${RESOLVED_PHP_CONFIG}" >>"$LOG_FILE" 2>&1; then
     show_failure_logs
     die "configure failed. See ${LOG_FILE}."
 fi

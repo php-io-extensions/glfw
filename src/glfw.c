@@ -31,6 +31,9 @@ PHP_MINIT_FUNCTION(glfw)
 {
 	glfw_register_glfw3(module_number);
 	glfw_register_glfw3native(module_number);
+#ifdef GLFW_PROBES
+	REGISTER_BOOL_CONSTANT("GLFW_PROBES", true, CONST_PERSISTENT);
+#endif
 
 	return SUCCESS;
 }

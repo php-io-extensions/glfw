@@ -44,6 +44,12 @@ enum {
 	GLFW_CB_MAXIMIZE,
 	GLFW_CB_FRAMEBUFFER_SIZE,
 	GLFW_CB_CONTENT_SCALE,
+	GLFW_CB_KEY,
+	GLFW_CB_CHAR,
+	GLFW_CB_MOUSE_BUTTON,
+	GLFW_CB_CURSOR_POS,
+	GLFW_CB_CURSOR_ENTER,
+	GLFW_CB_SCROLL,
 	GLFW_CB_COUNT
 };
 
@@ -79,10 +85,13 @@ extern zend_class_entry *glfw_ce_GLFWimage;
 
 /* The PHP object holding ptr, or a new one of class ce. NULL ptr → null. */
 void glfw_box(zval *rv, void *ptr, zend_class_entry *ce);
-/* The live pointer in a handle; throws ValueError ("GLFWwindow has been destroyed") and answers NULL once released. */
+/* The live pointer in a handle; throws ValueError ("GLFWwindow has been destroyed") once released. Check EG(exception). */
 void *glfw_handle_ptr(zend_object *obj, uint32_t arg_num);
-/* The live pointer, or NULL for a null object without error. False when it threw. */
-bool glfw_optional_ptr(zend_object *obj, uint32_t arg_num, void **out);
+/* The pointer in a handle a GLFW function takes as NULL-able: NULL for a null object or a released handle. */
+static zend_always_inline void *glfw_optional_ptr(zend_object *obj)
+{
+	return obj != NULL ? glfw_handle_from(obj)->ptr : NULL;
+}
 /* Clears the handle boxing ptr, if any: its PHP object answers "destroyed" from then on. */
 void glfw_release_ptr(void *ptr);
 /* Releases every boxed handle of class ce. */
@@ -102,16 +111,31 @@ void glfw_return_vidmode(zval *rv, const GLFWvidmode *mode);
 void glfw_register_glfw3(int module_number);
 void glfw_register_glfw3native(int module_number);
 
-/* pointer() and fromPointer() for a handle class. An address other than 0 is trusted. */
+/*
+ * The probe switch. A kept refusal site reads `if (!GLFW_PROBE_OFF("<id>") && (<check>))`.
+ * A build configured with --enable-glfw-probes lets env GLFW_PROBE_OFF=<id> turn that one
+ * site off, so tests/Probes can show the crash the site prevents; any other build compiles
+ * the switch out.
+ */
+#ifdef GLFW_PROBES
+bool glfw_probe_off(const char *id);
+# define GLFW_PROBE_OFF(id) glfw_probe_off(id)
+#else
+# define GLFW_PROBE_OFF(id) 0
+#endif
+
+/* A list's C count, given as its own parameter: false (and a ValueError) when it is past the list. */
+bool glfw_list_count(zend_long given, uint32_t length, uint32_t count_arg, uint32_t list_arg);
+
+/* pointer() and fromPointer() for a handle class: the address as is, 0 once released; fromPointer(0) is null. */
 #define GLFW_POINTER_METHODS(cls) \
-	ZEND_METHOD(cls, pointer) { ZEND_PARSE_PARAMETERS_NONE(); void *p = glfw_handle_ptr(Z_OBJ_P(ZEND_THIS), 0); if (!p) RETURN_THROWS(); RETURN_LONG((zend_long) (uintptr_t) p); } \
+	ZEND_METHOD(cls, pointer) { ZEND_PARSE_PARAMETERS_NONE(); RETURN_LONG((zend_long) (uintptr_t) glfw_handle_from(Z_OBJ_P(ZEND_THIS))->ptr); } \
 	ZEND_METHOD(cls, fromPointer) { zend_long p; ZEND_PARSE_PARAMETERS_START(1, 1) Z_PARAM_LONG(p) ZEND_PARSE_PARAMETERS_END(); \
-		if (p == 0) { zend_argument_value_error(1, "must not be a null address"); RETURN_THROWS(); } \
 		glfw_box(return_value, (void *) (uintptr_t) p, zend_get_called_scope(execute_data)); } \
 	ZEND_METHOD(cls, __construct) { ZEND_PARSE_PARAMETERS_NONE(); zend_throw_error(NULL, "%s cannot be constructed", #cls); RETURN_THROWS(); }
 
 /* A window parameter's live pointer, or RETURN_THROWS. */
-#define GLFW_WINDOW_ARG(var, obj, n) GLFWwindow *var = glfw_handle_ptr(obj, n); if (var == NULL) { RETURN_THROWS(); }
-#define GLFW_MONITOR_ARG(var, obj, n) GLFWmonitor *var = glfw_handle_ptr(obj, n); if (var == NULL) { RETURN_THROWS(); }
+#define GLFW_WINDOW_ARG(var, obj, n) GLFWwindow *var = glfw_handle_ptr(obj, n); if (EG(exception)) { RETURN_THROWS(); }
+#define GLFW_MONITOR_ARG(var, obj, n) GLFWmonitor *var = glfw_handle_ptr(obj, n); if (EG(exception)) { RETURN_THROWS(); }
 
 #endif

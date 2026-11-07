@@ -4,7 +4,7 @@ okf_version: "0.2"
 
 # ext-glfw
 
-1:1 PHP bindings of GLFW 3.4 for staged windows, input excluded. Version 0.11.0. Linux and macOS.
+1:1 PHP bindings of GLFW 3.4, input bound in part (window input callbacks; action, key, modifier and mouse button constants). Version 0.11.1. Linux and macOS.
 
 # API
 

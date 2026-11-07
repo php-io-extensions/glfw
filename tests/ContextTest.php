@@ -45,7 +45,7 @@ it('finds GL functions and extensions through the current context', function ():
 
     // NSGL looks names up and answers 0 for an unknown one; EGL may answer a dispatch stub for any name.
     expect($found)->toBeGreaterThan(0)
-        ->and($extension)->toBeFalse();
+        ->and($extension)->toBe(GLFW_FALSE);
     if (PHP_OS_FAMILY === 'Darwin') {
         expect($missing)->toBe(0);
     }

@@ -32,9 +32,13 @@ it('times out a wait with nothing to do', function (): void {
     expect($longest)->toBeGreaterThanOrEqual(0.09)->toBeLessThan(0.5);
 });
 
-it('refuses a timeout that is not a positive finite number', function (float $timeout): void {
-    expect(fn () => glfwWaitEventsTimeout($timeout))->toThrow(ValueError::class, 'positive, finite number of seconds');
-})->with(['zero' => 0.0, 'negative' => -1.0, 'infinite' => INF, 'NaN' => NAN]);
+// GLFW reports GLFW_INVALID_VALUE for these and waits for nothing.
+it('passes a timeout GLFW does not accept to GLFW, which reports it', function (float $timeout): void {
+    glfwGetError();
+    glfwWaitEventsTimeout($timeout);
+
+    expect(glfwGetError())->toBe(GLFW_INVALID_VALUE);
+})->with(['negative' => -1.0, 'infinite' => INF, 'NaN' => NAN]);
 
 it('keeps time, and sets it', function (): void {
     glfwSetTime(10.0);

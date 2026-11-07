@@ -47,18 +47,8 @@ static bool glfw_assign_doubles(zval **refs, const float *values, int count)
 	return true;
 }
 
-/* An int parameter that GLFW takes as int. */
-static bool glfw_int_from(zend_long value, uint32_t arg_num, int *out)
-{
-	if (value < INT_MIN || value > INT_MAX) {
-		zend_argument_value_error(arg_num, "must be a 32-bit int");
-		return false;
-	}
-	*out = (int) value;
-	return true;
-}
-
-#define GLFW_INT_ARG(var, value, n) int var; if (!glfw_int_from(value, n, &var)) { RETURN_THROWS(); }
+/* An int parameter that GLFW takes as int: converted as C converts it. */
+#define GLFW_INT_ARG(var, value, n) int var = (int) (value);
 
 /* ---- GLFWgammaramp, GLFWimage --------------------------------------------- */
 
@@ -115,6 +105,24 @@ static zval *glfw_prop(zend_object *obj, const char *name)
 	return zend_read_property(obj->ce, obj, name, strlen(name), true, &rv);
 }
 
+/*
+ * Stores callback (null clears) in slot, and returns the callable it held, as GLFW's set-callback
+ * functions return the previous callback. The returned callable moves out of the slot.
+ */
+static void glfw_swap_callback(zval *slot, zval *callback, zval *rv)
+{
+	if (Z_TYPE_P(slot) == IS_UNDEF) {
+		ZVAL_NULL(rv);
+	} else {
+		ZVAL_COPY_VALUE(rv, slot);
+	}
+	if (Z_TYPE_P(callback) == IS_NULL) {
+		ZVAL_UNDEF(slot);
+	} else {
+		ZVAL_COPY(slot, callback);
+	}
+}
+
 /* ---- Initialization, version and error ------------------------------------ */
 
 static void glfw_error_trampoline(int code, const char *description)
@@ -130,7 +138,7 @@ static void glfw_error_trampoline(int code, const char *description)
 ZEND_FUNCTION(glfwInit)
 {
 	ZEND_PARSE_PARAMETERS_NONE();
-	RETURN_BOOL(glfwInit() == GLFW_TRUE);
+	RETURN_LONG(glfwInit());
 }
 
 /* glfwTerminate destroys every window and forgets every monitor: their PHP objects say so after. */
@@ -212,14 +220,8 @@ ZEND_FUNCTION(glfwSetErrorCallback)
 		RETURN_THROWS();
 	}
 
-	zval_ptr_dtor(&GLFW_G(error_callback));
-	if (Z_TYPE_P(callback) == IS_NULL) {
-		ZVAL_UNDEF(&GLFW_G(error_callback));
-		glfwSetErrorCallback(NULL);
-	} else {
-		ZVAL_COPY(&GLFW_G(error_callback), callback);
-		glfwSetErrorCallback(glfw_error_trampoline);
-	}
+	glfw_swap_callback(&GLFW_G(error_callback), callback, return_value);
+	glfwSetErrorCallback(Z_TYPE_P(callback) == IS_NULL ? NULL : glfw_error_trampoline);
 }
 
 ZEND_FUNCTION(glfwGetPlatform)
@@ -237,7 +239,7 @@ ZEND_FUNCTION(glfwPlatformSupported)
 	ZEND_PARSE_PARAMETERS_END();
 	GLFW_INT_ARG(native, platform, 1)
 
-	RETURN_BOOL(glfwPlatformSupported(native) == GLFW_TRUE);
+	RETURN_LONG(glfwPlatformSupported(native));
 }
 
 /* ---- Monitors ------------------------------------------------------------- */
@@ -372,14 +374,8 @@ ZEND_FUNCTION(glfwSetMonitorCallback)
 		RETURN_THROWS();
 	}
 
-	zval_ptr_dtor(&GLFW_G(monitor_callback));
-	if (Z_TYPE_P(callback) == IS_NULL) {
-		ZVAL_UNDEF(&GLFW_G(monitor_callback));
-		glfwSetMonitorCallback(NULL);
-	} else {
-		ZVAL_COPY(&GLFW_G(monitor_callback), callback);
-		glfwSetMonitorCallback(glfw_monitor_trampoline);
-	}
+	glfw_swap_callback(&GLFW_G(monitor_callback), callback, return_value);
+	glfwSetMonitorCallback(Z_TYPE_P(callback) == IS_NULL ? NULL : glfw_monitor_trampoline);
 }
 
 ZEND_FUNCTION(glfwGetVideoModes)
@@ -443,6 +439,50 @@ ZEND_FUNCTION(glfwGetGammaRamp)
 	}
 }
 
+/*
+ * The C GLFWgammaramp of a PHP one: its three lists become red, green and blue arrays of one
+ * size, in one emalloc block at ramp->red. Lists of different lengths have no single size.
+ */
+static bool glfw_gamma_from(zend_object *obj, uint32_t arg_num, GLFWgammaramp *ramp)
+{
+	const char *names[3] = { "red", "green", "blue" };
+	HashTable *channels[3];
+
+	for (int c = 0; c < 3; c++) {
+		zval *channel = glfw_prop(obj, names[c]);
+		if (Z_TYPE_P(channel) != IS_ARRAY) {
+			zend_argument_type_error(arg_num, "must have a list of ints as $%s", names[c]);
+			return false;
+		}
+		channels[c] = Z_ARRVAL_P(channel);
+		if (zend_hash_num_elements(channels[c]) != zend_hash_num_elements(channels[0])) {
+			zend_argument_value_error(arg_num, "must have red, green and blue lists of one length");
+			return false;
+		}
+	}
+
+	uint32_t size = zend_hash_num_elements(channels[0]);
+	unsigned short *values = safe_emalloc(3, (size_t) size * sizeof(unsigned short), 0);
+	for (int c = 0; c < 3; c++) {
+		uint32_t i = 0;
+		zval *value;
+		ZEND_HASH_FOREACH_VAL(channels[c], value) {
+			if (Z_TYPE_P(value) != IS_LONG) {
+				efree(values);
+				zend_argument_type_error(arg_num, "must hold ints in $%s", names[c]);
+				return false;
+			}
+			values[c * size + i++] = (unsigned short) Z_LVAL_P(value);
+		} ZEND_HASH_FOREACH_END();
+	}
+
+	ramp->red = values;
+	ramp->green = values + size;
+	ramp->blue = values + 2 * size;
+	ramp->size = size;
+	return true;
+}
+
 ZEND_FUNCTION(glfwSetGammaRamp)
 {
 	zend_object *monitor_obj, *ramp_obj;
@@ -453,46 +493,12 @@ ZEND_FUNCTION(glfwSetGammaRamp)
 	ZEND_PARSE_PARAMETERS_END();
 	GLFW_MONITOR_ARG(monitor, monitor_obj, 1)
 
-	const char *names[3] = { "red", "green", "blue" };
-	HashTable *channels[3];
-	uint32_t size = 0;
-
-	for (int c = 0; c < 3; c++) {
-		zval *channel = glfw_prop(ramp_obj, names[c]);
-		if (Z_TYPE_P(channel) != IS_ARRAY) {
-			zend_argument_type_error(2, "must have a list of ints as $%s", names[c]);
-			RETURN_THROWS();
-		}
-		channels[c] = Z_ARRVAL_P(channel);
-		if (c == 0) {
-			size = zend_hash_num_elements(channels[c]);
-		} else if (zend_hash_num_elements(channels[c]) != size) {
-			zend_argument_value_error(2, "must have red, green and blue lists of one length");
-			RETURN_THROWS();
-		}
-	}
-	if (size == 0) {
-		zend_argument_value_error(2, "must have at least one value per channel");
+	GLFWgammaramp ramp;
+	if (!glfw_gamma_from(ramp_obj, 2, &ramp)) {
 		RETURN_THROWS();
 	}
-
-	unsigned short *values = safe_emalloc(3 * size, sizeof(unsigned short), 0);
-	for (int c = 0; c < 3; c++) {
-		uint32_t i = 0;
-		zval *value;
-		ZEND_HASH_FOREACH_VAL(channels[c], value) {
-			if (Z_TYPE_P(value) != IS_LONG || Z_LVAL_P(value) < 0 || Z_LVAL_P(value) > 65535) {
-				efree(values);
-				zend_argument_value_error(2, "must hold ints from 0 to 65535 in $%s", names[c]);
-				RETURN_THROWS();
-			}
-			values[c * size + i++] = (unsigned short) Z_LVAL_P(value);
-		} ZEND_HASH_FOREACH_END();
-	}
-
-	GLFWgammaramp ramp = { values, values + size, values + 2 * size, size };
 	glfwSetGammaRamp(monitor, &ramp);
-	efree(values);
+	efree(ramp.red);
 }
 
 /* ---- Windows -------------------------------------------------------------- */
@@ -514,12 +520,6 @@ ZEND_FUNCTION(glfwWindowHint)
 		Z_PARAM_LONG(value)
 	ZEND_PARSE_PARAMETERS_END();
 	GLFW_INT_ARG(native_hint, hint, 1)
-
-	/* GLFW_ANY_POSITION is 0x80000000: an int's bit pattern, past PHP's positive int range for C int. */
-	if (value == (zend_long) 0x80000000u) {
-		glfwWindowHint(native_hint, (int) GLFW_ANY_POSITION);
-		return;
-	}
 	GLFW_INT_ARG(native_value, value, 2)
 	glfwWindowHint(native_hint, native_value);
 }
@@ -543,7 +543,6 @@ ZEND_FUNCTION(glfwCreateWindow)
 	zend_long width, height;
 	zend_string *title;
 	zend_object *monitor_obj = NULL, *share_obj = NULL;
-	void *monitor, *share;
 
 	ZEND_PARSE_PARAMETERS_START(3, 5)
 		Z_PARAM_LONG(width)
@@ -555,16 +554,20 @@ ZEND_FUNCTION(glfwCreateWindow)
 	ZEND_PARSE_PARAMETERS_END();
 	GLFW_INT_ARG(native_width, width, 1)
 	GLFW_INT_ARG(native_height, height, 2)
-	if (!glfw_optional_ptr(monitor_obj, 4, &monitor) || !glfw_optional_ptr(share_obj, 5, &share)) {
-		RETURN_THROWS();
-	}
 
-	glfw_box(return_value, glfwCreateWindow(native_width, native_height, ZSTR_VAL(title), monitor, share), glfw_ce_GLFWwindow);
+	glfw_box(return_value, glfwCreateWindow(native_width, native_height, ZSTR_VAL(title),
+		glfw_optional_ptr(monitor_obj), glfw_optional_ptr(share_obj)), glfw_ce_GLFWwindow);
 }
 
+/* GLFW destroys nothing for NULL: a destroyed window passes through. */
 ZEND_FUNCTION(glfwDestroyWindow)
 {
-	GLFW_PARSE_WINDOW
+	zend_object *window_obj;
+
+	ZEND_PARSE_PARAMETERS_START(1, 1)
+		Z_PARAM_OBJ_OF_CLASS(window_obj, glfw_ce_GLFWwindow)
+	ZEND_PARSE_PARAMETERS_END();
+	GLFWwindow *window = glfw_optional_ptr(window_obj);
 
 	glfw_callbacks_drop(window);
 	glfwDestroyWindow(window);
@@ -574,21 +577,22 @@ ZEND_FUNCTION(glfwDestroyWindow)
 ZEND_FUNCTION(glfwWindowShouldClose)
 {
 	GLFW_PARSE_WINDOW
-	RETURN_BOOL(glfwWindowShouldClose(window) == GLFW_TRUE);
+	RETURN_LONG(glfwWindowShouldClose(window));
 }
 
 ZEND_FUNCTION(glfwSetWindowShouldClose)
 {
 	zend_object *window_obj;
-	bool value;
+	zend_long value;
 
 	ZEND_PARSE_PARAMETERS_START(2, 2)
 		Z_PARAM_OBJ_OF_CLASS(window_obj, glfw_ce_GLFWwindow)
-		Z_PARAM_BOOL(value)
+		Z_PARAM_LONG(value)
 	ZEND_PARSE_PARAMETERS_END();
 	GLFW_WINDOW_ARG(window, window_obj, 1)
+	GLFW_INT_ARG(native_value, value, 2)
 
-	glfwSetWindowShouldClose(window, value ? GLFW_TRUE : GLFW_FALSE);
+	glfwSetWindowShouldClose(window, native_value);
 }
 
 ZEND_FUNCTION(glfwGetWindowTitle)
@@ -616,36 +620,28 @@ ZEND_FUNCTION(glfwSetWindowTitle)
 	glfwSetWindowTitle(window, ZSTR_VAL(title));
 }
 
-ZEND_FUNCTION(glfwSetWindowIcon)
+/* The C GLFWimage array of a list of GLFWimage, emalloc'd (NULL for an empty list); the pixels stay the strings'. */
+static GLFWimage *glfw_images_from(HashTable *list, uint32_t arg_num)
 {
-	zend_object *window_obj;
-	HashTable *images_ht;
-
-	ZEND_PARSE_PARAMETERS_START(2, 2)
-		Z_PARAM_OBJ_OF_CLASS(window_obj, glfw_ce_GLFWwindow)
-		Z_PARAM_ARRAY_HT(images_ht)
-	ZEND_PARSE_PARAMETERS_END();
-	GLFW_WINDOW_ARG(window, window_obj, 1)
-
-	uint32_t count = zend_hash_num_elements(images_ht);
-	GLFWimage *images = count > 0 ? safe_emalloc(count, sizeof(GLFWimage), 0) : NULL;
+	uint32_t length = zend_hash_num_elements(list);
+	GLFWimage *images = length > 0 ? safe_emalloc(length, sizeof(GLFWimage), 0) : NULL;
 	uint32_t i = 0;
 	zval *entry;
 
-	ZEND_HASH_FOREACH_VAL(images_ht, entry) {
+	ZEND_HASH_FOREACH_VAL(list, entry) {
 		if (Z_TYPE_P(entry) != IS_OBJECT || Z_OBJCE_P(entry) != glfw_ce_GLFWimage) {
 			efree(images);
-			zend_argument_type_error(2, "must be a list of GLFWimage");
-			RETURN_THROWS();
+			zend_argument_type_error(arg_num, "must be a list of GLFWimage");
+			return NULL;
 		}
 		zval *w = glfw_prop(Z_OBJ_P(entry), "width");
 		zval *h = glfw_prop(Z_OBJ_P(entry), "height");
 		zval *pixels = glfw_prop(Z_OBJ_P(entry), "pixels");
-		if (Z_LVAL_P(w) < 1 || Z_LVAL_P(h) < 1 || Z_LVAL_P(w) > 4096 || Z_LVAL_P(h) > 4096
-			|| (zend_long) Z_STRLEN_P(pixels) != Z_LVAL_P(w) * Z_LVAL_P(h) * 4) {
+		/* GLFW reads 4 x width x height bytes of pixels. */
+		if (!GLFW_PROBE_OFF("glfw-icon-pixels-length") && (zend_long) Z_STRLEN_P(pixels) < Z_LVAL_P(w) * Z_LVAL_P(h) * 4) {
 			efree(images);
-			zend_argument_value_error(2, "must hold images whose pixels are 4 x width x height bytes, 1 to 4096 pixels a side");
-			RETURN_THROWS();
+			zend_argument_value_error(arg_num, "must hold images whose pixels are at least 4 x width x height bytes"); /* binding:glfw-icon-pixels-length */
+			return NULL;
 		}
 		images[i].width = (int) Z_LVAL_P(w);
 		images[i].height = (int) Z_LVAL_P(h);
@@ -653,6 +649,29 @@ ZEND_FUNCTION(glfwSetWindowIcon)
 		i++;
 	} ZEND_HASH_FOREACH_END();
 
+	return images;
+}
+
+ZEND_FUNCTION(glfwSetWindowIcon)
+{
+	zend_object *window_obj;
+	zend_long count;
+	HashTable *images_ht;
+
+	ZEND_PARSE_PARAMETERS_START(3, 3)
+		Z_PARAM_OBJ_OF_CLASS(window_obj, glfw_ce_GLFWwindow)
+		Z_PARAM_LONG(count)
+		Z_PARAM_ARRAY_HT(images_ht)
+	ZEND_PARSE_PARAMETERS_END();
+	GLFW_WINDOW_ARG(window, window_obj, 1)
+	if (!glfw_list_count(count, zend_hash_num_elements(images_ht), 2, 3)) {
+		RETURN_THROWS();
+	}
+
+	GLFWimage *images = glfw_images_from(images_ht, 3);
+	if (EG(exception)) {
+		RETURN_THROWS();
+	}
 	glfwSetWindowIcon(window, (int) count, images);
 	if (images != NULL) {
 		efree(images);
@@ -801,7 +820,6 @@ ZEND_FUNCTION(glfwSetWindowMonitor)
 {
 	zend_object *window_obj, *monitor_obj = NULL;
 	zend_long args[5];
-	void *monitor;
 
 	ZEND_PARSE_PARAMETERS_START(7, 7)
 		Z_PARAM_OBJ_OF_CLASS(window_obj, glfw_ce_GLFWwindow)
@@ -813,9 +831,7 @@ ZEND_FUNCTION(glfwSetWindowMonitor)
 		Z_PARAM_LONG(args[4])
 	ZEND_PARSE_PARAMETERS_END();
 	GLFW_WINDOW_ARG(window, window_obj, 1)
-	if (!glfw_optional_ptr(monitor_obj, 2, &monitor)) {
-		RETURN_THROWS();
-	}
+	GLFWmonitor *monitor = glfw_optional_ptr(monitor_obj);
 	GLFW_INT_ARG(xpos, args[0], 3)
 	GLFW_INT_ARG(ypos, args[1], 4)
 	GLFW_INT_ARG(width, args[2], 5)
@@ -883,38 +899,39 @@ static void glfw_pos_trampoline(GLFWwindow *w, int x, int y) { zval a[3]; ZVAL_L
 static void glfw_size_trampoline(GLFWwindow *w, int x, int y) { zval a[3]; ZVAL_LONG(&a[1], x); ZVAL_LONG(&a[2], y); glfw_window_dispatch(w, GLFW_CB_SIZE, 3, a); }
 static void glfw_close_trampoline(GLFWwindow *w) { zval a[1]; glfw_window_dispatch(w, GLFW_CB_CLOSE, 1, a); }
 static void glfw_refresh_trampoline(GLFWwindow *w) { zval a[1]; glfw_window_dispatch(w, GLFW_CB_REFRESH, 1, a); }
-static void glfw_focus_trampoline(GLFWwindow *w, int on) { zval a[2]; ZVAL_BOOL(&a[1], on == GLFW_TRUE); glfw_window_dispatch(w, GLFW_CB_FOCUS, 2, a); }
-static void glfw_iconify_trampoline(GLFWwindow *w, int on) { zval a[2]; ZVAL_BOOL(&a[1], on == GLFW_TRUE); glfw_window_dispatch(w, GLFW_CB_ICONIFY, 2, a); }
-static void glfw_maximize_trampoline(GLFWwindow *w, int on) { zval a[2]; ZVAL_BOOL(&a[1], on == GLFW_TRUE); glfw_window_dispatch(w, GLFW_CB_MAXIMIZE, 2, a); }
+static void glfw_focus_trampoline(GLFWwindow *w, int on) { zval a[2]; ZVAL_LONG(&a[1], on); glfw_window_dispatch(w, GLFW_CB_FOCUS, 2, a); }
+static void glfw_iconify_trampoline(GLFWwindow *w, int on) { zval a[2]; ZVAL_LONG(&a[1], on); glfw_window_dispatch(w, GLFW_CB_ICONIFY, 2, a); }
+static void glfw_maximize_trampoline(GLFWwindow *w, int on) { zval a[2]; ZVAL_LONG(&a[1], on); glfw_window_dispatch(w, GLFW_CB_MAXIMIZE, 2, a); }
 static void glfw_framebuffer_trampoline(GLFWwindow *w, int x, int y) { zval a[3]; ZVAL_LONG(&a[1], x); ZVAL_LONG(&a[2], y); glfw_window_dispatch(w, GLFW_CB_FRAMEBUFFER_SIZE, 3, a); }
 static void glfw_scale_trampoline(GLFWwindow *w, float x, float y) { zval a[3]; ZVAL_DOUBLE(&a[1], x); ZVAL_DOUBLE(&a[2], y); glfw_window_dispatch(w, GLFW_CB_CONTENT_SCALE, 3, a); }
 
-/* Stores or clears slot's callable, and points GLFW at the trampoline or at nothing. */
+static void glfw_key_trampoline(GLFWwindow *w, int key, int scancode, int action, int mods) { zval a[5]; ZVAL_LONG(&a[1], key); ZVAL_LONG(&a[2], scancode); ZVAL_LONG(&a[3], action); ZVAL_LONG(&a[4], mods); glfw_window_dispatch(w, GLFW_CB_KEY, 5, a); }
+static void glfw_char_trampoline(GLFWwindow *w, unsigned int codepoint) { zval a[2]; ZVAL_LONG(&a[1], codepoint); glfw_window_dispatch(w, GLFW_CB_CHAR, 2, a); }
+static void glfw_mouse_button_trampoline(GLFWwindow *w, int button, int action, int mods) { zval a[4]; ZVAL_LONG(&a[1], button); ZVAL_LONG(&a[2], action); ZVAL_LONG(&a[3], mods); glfw_window_dispatch(w, GLFW_CB_MOUSE_BUTTON, 4, a); }
+static void glfw_cursor_pos_trampoline(GLFWwindow *w, double x, double y) { zval a[3]; ZVAL_DOUBLE(&a[1], x); ZVAL_DOUBLE(&a[2], y); glfw_window_dispatch(w, GLFW_CB_CURSOR_POS, 3, a); }
+static void glfw_cursor_enter_trampoline(GLFWwindow *w, int entered) { zval a[2]; ZVAL_LONG(&a[1], entered); glfw_window_dispatch(w, GLFW_CB_CURSOR_ENTER, 2, a); }
+static void glfw_scroll_trampoline(GLFWwindow *w, double x, double y) { zval a[3]; ZVAL_DOUBLE(&a[1], x); ZVAL_DOUBLE(&a[2], y); glfw_window_dispatch(w, GLFW_CB_SCROLL, 3, a); }
+
+/* Stores or clears slot's callable, points GLFW at the trampoline or at nothing, and returns the previous callable. */
 #define GLFW_WINDOW_CALLBACK(fn, slot, trampoline) \
 ZEND_FUNCTION(fn) \
 { \
 	zend_object *window_obj; \
-	zval *callback; \
+	zend_fcall_info fci; \
+	zend_fcall_info_cache fcc; \
+	zval none, *callback; \
 	ZEND_PARSE_PARAMETERS_START(2, 2) \
 		Z_PARAM_OBJ_OF_CLASS(window_obj, glfw_ce_GLFWwindow) \
-		Z_PARAM_ZVAL(callback) \
+		Z_PARAM_FUNC_OR_NULL(fci, fcc) \
 	ZEND_PARSE_PARAMETERS_END(); \
 	GLFW_WINDOW_ARG(window, window_obj, 1) \
-	if (Z_TYPE_P(callback) != IS_NULL && !zend_is_callable(callback, 0, NULL)) { \
-		zend_argument_type_error(2, "must be a valid callback or null"); \
-		RETURN_THROWS(); \
-	} \
+	ZVAL_NULL(&none); \
+	callback = ZEND_FCI_INITIALIZED(fci) ? &fci.function_name : &none; \
 	glfw_window_callbacks *callbacks = glfw_callbacks_for(window, Z_TYPE_P(callback) != IS_NULL); \
 	if (callbacks != NULL) { \
-		zval_ptr_dtor(&callbacks->callbacks[slot]); \
-		ZVAL_UNDEF(&callbacks->callbacks[slot]); \
+		glfw_swap_callback(&callbacks->callbacks[slot], callback, return_value); \
 	} \
-	if (Z_TYPE_P(callback) == IS_NULL) { \
-		fn(window, NULL); \
-	} else { \
-		ZVAL_COPY(&callbacks->callbacks[slot], callback); \
-		fn(window, trampoline); \
-	} \
+	fn(window, Z_TYPE_P(callback) == IS_NULL ? NULL : trampoline); \
 }
 
 GLFW_WINDOW_CALLBACK(glfwSetWindowPosCallback, GLFW_CB_POS, glfw_pos_trampoline)
@@ -926,6 +943,66 @@ GLFW_WINDOW_CALLBACK(glfwSetWindowIconifyCallback, GLFW_CB_ICONIFY, glfw_iconify
 GLFW_WINDOW_CALLBACK(glfwSetWindowMaximizeCallback, GLFW_CB_MAXIMIZE, glfw_maximize_trampoline)
 GLFW_WINDOW_CALLBACK(glfwSetFramebufferSizeCallback, GLFW_CB_FRAMEBUFFER_SIZE, glfw_framebuffer_trampoline)
 GLFW_WINDOW_CALLBACK(glfwSetWindowContentScaleCallback, GLFW_CB_CONTENT_SCALE, glfw_scale_trampoline)
+GLFW_WINDOW_CALLBACK(glfwSetKeyCallback, GLFW_CB_KEY, glfw_key_trampoline)
+GLFW_WINDOW_CALLBACK(glfwSetCharCallback, GLFW_CB_CHAR, glfw_char_trampoline)
+GLFW_WINDOW_CALLBACK(glfwSetMouseButtonCallback, GLFW_CB_MOUSE_BUTTON, glfw_mouse_button_trampoline)
+GLFW_WINDOW_CALLBACK(glfwSetCursorPosCallback, GLFW_CB_CURSOR_POS, glfw_cursor_pos_trampoline)
+GLFW_WINDOW_CALLBACK(glfwSetCursorEnterCallback, GLFW_CB_CURSOR_ENTER, glfw_cursor_enter_trampoline)
+GLFW_WINDOW_CALLBACK(glfwSetScrollCallback, GLFW_CB_SCROLL, glfw_scroll_trampoline)
+
+ZEND_FUNCTION(glfwGetKeyName)
+{
+	zend_long key, scancode;
+
+	ZEND_PARSE_PARAMETERS_START(2, 2)
+		Z_PARAM_LONG(key)
+		Z_PARAM_LONG(scancode)
+	ZEND_PARSE_PARAMETERS_END();
+	GLFW_INT_ARG(native_key, key, 1)
+	GLFW_INT_ARG(native_scancode, scancode, 2)
+
+	const char *name = glfwGetKeyName(native_key, native_scancode);
+	if (name == NULL) {
+		RETURN_NULL();
+	}
+	RETURN_STRING(name);
+}
+
+ZEND_FUNCTION(glfwGetKey)
+{
+	zend_object *window_obj;
+	zend_long key;
+
+	ZEND_PARSE_PARAMETERS_START(2, 2)
+		Z_PARAM_OBJ_OF_CLASS(window_obj, glfw_ce_GLFWwindow)
+		Z_PARAM_LONG(key)
+	ZEND_PARSE_PARAMETERS_END();
+	GLFW_WINDOW_ARG(window, window_obj, 1)
+	GLFW_INT_ARG(native_key, key, 2)
+
+	RETURN_LONG(glfwGetKey(window, native_key));
+}
+
+ZEND_FUNCTION(glfwGetCursorPos)
+{
+	zend_object *window_obj;
+	zval *refs[2];
+	double values[2];
+
+	ZEND_PARSE_PARAMETERS_START(3, 3)
+		Z_PARAM_OBJ_OF_CLASS(window_obj, glfw_ce_GLFWwindow)
+		Z_PARAM_ZVAL(refs[0])
+		Z_PARAM_ZVAL(refs[1])
+	ZEND_PARSE_PARAMETERS_END();
+	GLFW_WINDOW_ARG(window, window_obj, 1)
+
+	glfwGetCursorPos(window, &values[0], &values[1]);
+	ZEND_TRY_ASSIGN_REF_DOUBLE(refs[0], values[0]);
+	if (EG(exception)) {
+		return;
+	}
+	ZEND_TRY_ASSIGN_REF_DOUBLE(refs[1], values[1]);
+}
 
 /* ---- Events and time ------------------------------------------------------ */
 
@@ -948,10 +1025,6 @@ ZEND_FUNCTION(glfwWaitEventsTimeout)
 	ZEND_PARSE_PARAMETERS_START(1, 1)
 		Z_PARAM_DOUBLE(timeout)
 	ZEND_PARSE_PARAMETERS_END();
-	if (!(timeout > 0.0) || !zend_finite(timeout)) {
-		zend_argument_value_error(1, "must be a positive, finite number of seconds");
-		RETURN_THROWS();
-	}
 
 	glfwWaitEventsTimeout(timeout);
 }
@@ -996,16 +1069,12 @@ ZEND_FUNCTION(glfwGetTimerFrequency)
 ZEND_FUNCTION(glfwMakeContextCurrent)
 {
 	zend_object *window_obj = NULL;
-	void *window;
 
 	ZEND_PARSE_PARAMETERS_START(1, 1)
 		Z_PARAM_OBJ_OF_CLASS_OR_NULL(window_obj, glfw_ce_GLFWwindow)
 	ZEND_PARSE_PARAMETERS_END();
-	if (!glfw_optional_ptr(window_obj, 1, &window)) {
-		RETURN_THROWS();
-	}
 
-	glfwMakeContextCurrent(window);
+	glfwMakeContextCurrent(glfw_optional_ptr(window_obj));
 }
 
 ZEND_FUNCTION(glfwGetCurrentContext)
@@ -1034,7 +1103,7 @@ ZEND_FUNCTION(glfwExtensionSupported)
 		Z_PARAM_STR(extension)
 	ZEND_PARSE_PARAMETERS_END();
 
-	RETURN_BOOL(glfwExtensionSupported(ZSTR_VAL(extension)) == GLFW_TRUE);
+	RETURN_LONG(glfwExtensionSupported(ZSTR_VAL(extension)));
 }
 
 ZEND_FUNCTION(glfwGetProcAddress)
@@ -1064,7 +1133,7 @@ ZEND_FUNCTION(glfwInitVulkanLoader)
 ZEND_FUNCTION(glfwVulkanSupported)
 {
 	ZEND_PARSE_PARAMETERS_NONE();
-	RETURN_BOOL(glfwVulkanSupported() == GLFW_TRUE);
+	RETURN_LONG(glfwVulkanSupported());
 }
 
 ZEND_FUNCTION(glfwGetRequiredInstanceExtensions)
@@ -1089,12 +1158,8 @@ ZEND_FUNCTION(glfwGetPhysicalDevicePresentationSupport)
 		Z_PARAM_LONG(device)
 		Z_PARAM_LONG(queuefamily)
 	ZEND_PARSE_PARAMETERS_END();
-	if (queuefamily < 0 || queuefamily > UINT32_MAX) {
-		zend_argument_value_error(3, "must be a queue family index");
-		RETURN_THROWS();
-	}
 
-	RETURN_BOOL(glfwGetPhysicalDevicePresentationSupport((VkInstance) (uintptr_t) instance, (VkPhysicalDevice) (uintptr_t) device, (uint32_t) queuefamily) == GLFW_TRUE);
+	RETURN_LONG(glfwGetPhysicalDevicePresentationSupport((VkInstance) (uintptr_t) instance, (VkPhysicalDevice) (uintptr_t) device, (uint32_t) queuefamily));
 }
 
 ZEND_FUNCTION(glfwGetInstanceProcAddress)
@@ -1123,10 +1188,6 @@ ZEND_FUNCTION(glfwCreateWindowSurface)
 		Z_PARAM_ZVAL(surface_ref)
 	ZEND_PARSE_PARAMETERS_END();
 	GLFW_WINDOW_ARG(window, window_obj, 2)
-	if (instance == 0) {
-		zend_argument_value_error(1, "must be a VkInstance, not 0");
-		RETURN_THROWS();
-	}
 
 	VkSurfaceKHR surface = 0;
 	VkResult result = glfwCreateWindowSurface((VkInstance) (uintptr_t) instance, window,

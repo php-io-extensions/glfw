@@ -1,11 +1,11 @@
 # glfw
 
 [![CI](https://img.shields.io/github/actions/workflow/status/php-io-extensions/glfw/ci.yml?style=flat-square&label=CI)](https://github.com/php-io-extensions/glfw/actions/workflows/ci.yml)
-[![GLFW API](https://img.shields.io/badge/GLFW_API-66.4%25_%2899%2F149%29-blue?style=flat-square)](SUPPORT.md)
+[![GLFW API](https://img.shields.io/badge/GLFW_API-72.5%25_%28108%2F149%29-blue?style=flat-square)](SUPPORT.md)
 
-1:1 PHP bindings of GLFW 3.4 for staged windows: initialization and errors, monitors, video modes and gamma, windows with their hints, attributes and callbacks, events and time, OpenGL contexts, Vulkan surfaces, and native handles. Version 0.11.0. Linux and macOS.
+1:1 PHP bindings of GLFW 3.4: initialization and errors, monitors, video modes and gamma, windows with their hints, attributes and callbacks, events and time, OpenGL contexts, Vulkan surfaces, and native handles. Version 0.11.1. Linux and macOS.
 
-Input is not bound: no keyboard, mouse, cursor, joystick or gamepad functions. Function and constant names are the C names. A handle is one PHP object per native pointer. Dropping the last PHP reference does not destroy the native object.
+Input is bound in part: the key, char, mouse button, cursor position, cursor enter and scroll callbacks, with the action, key, modifier and mouse button constants, and `glfwGetKeyName`, `glfwGetCursorPos` and `glfwGetKey`. The other polling calls, cursors, input modes, clipboard, joystick and gamepad are not bound. Function and constant names are the C names. A handle is one PHP object per native pointer. Dropping the last PHP reference does not destroy the native object.
 
 ## Requirements
 
@@ -39,12 +39,20 @@ Bindings are the C API with these translations:
 - An out-parameter is a by-reference parameter (`glfwGetWindowSize($window, $width, $height)`).
 - A `GLFWwindow *` or `GLFWmonitor *` is a `GLFWwindow` or `GLFWmonitor` handle; `NULL` is `null`.
 - A `const GLFWvidmode *` GLFW returns is a copied `GLFWvidmode`. A list GLFW returns with a count (`glfwGetMonitors`, `glfwGetVideoModes`, `glfwGetRequiredInstanceExtensions`) is a PHP list.
-- `GLFWgammaramp` holds three lists of 16-bit ints. `GLFWimage` holds RGBA8 pixels as a string of 4 × width × height bytes; `glfwSetWindowIcon` takes a list of them.
+- `GLFWgammaramp` holds three lists of 16-bit ints, one length (the C struct's `size`). `GLFWimage` holds RGBA8 pixels as a string of 4 × width × height bytes; `glfwSetWindowIcon($window, $count, $images)` takes a list of them and its C count.
 - A function address, a Vulkan handle, or a native handle is an `int`.
-- A callback is a PHP callable or `null`, called directly from GLFW with the C arguments, a `GLFWwindow` first.
-- A C `int` that GLFW uses as a boolean in a return (`glfwInit`, `glfwWindowShouldClose`, `glfwVulkanSupported`) is `bool`. Hints and attributes stay `int` (`GLFW_TRUE`, `GLFW_FALSE`, `GLFW_DONT_CARE`).
+- A callback is a PHP callable or `null`, called directly from GLFW with the C arguments, a `GLFWwindow` first. A `glfwSet*Callback` returns the callable it replaces, or `null`.
+- A C `int` is an `int`, `GLFW_TRUE`/`GLFW_FALSE` included (`glfwInit`, `glfwWindowShouldClose`, focus callbacks). An int argument converts to C `int` as C converts it.
+- `pointer()` is the address, 0 once the window is destroyed or the monitor disconnected; `fromPointer(0)` is `null`.
 
 Failure is `glfwGetError()` or the error callback, as in C. Constants are PHP constants under their C names, with the values of the GLFW header.
+
+The extension refuses a call only where GLFW would crash the process:
+
+- a destroyed window or disconnected monitor (`ValueError`), except where GLFW takes `NULL` (`glfwDestroyWindow`, `glfwMakeContextCurrent`, the monitor and share of `glfwCreateWindow`, the monitor of `glfwSetWindowMonitor`);
+- an icon whose pixels are shorter than 4 × width × height bytes, or a `$count` past the `$images` list.
+
+`tests/Probes` shows each crash on a probe build (`GLFW_CONFIGURE="--enable-glfw-probes" ./install-macos.sh`).
 
 ## Windows for a game engine
 
@@ -69,7 +77,7 @@ glfwSetWindowAttrib($window, GLFW_DECORATED, GLFW_FALSE);
 glfwSetWindowAttrib($window, GLFW_FLOATING, GLFW_TRUE);
 glfwSetWindowAttrib($window, GLFW_MOUSE_PASSTHROUGH, GLFW_TRUE);
 
-while (! glfwWindowShouldClose($window)) {
+while (glfwWindowShouldClose($window) === GLFW_FALSE) {
     glfwWaitEventsTimeout(1 / 60);
 }
 glfwDestroyWindow($window);

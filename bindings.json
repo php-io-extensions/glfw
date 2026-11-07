@@ -1,0 +1,41 @@
+{
+  "symbols": {},
+  "glue": {
+    "*": {"methods": ["pointer", "fromPointer"], "forwards": "address hand-off on every handle class"},
+    "GLFWgammaramp": {"methods": ["__construct"], "forwards": "a C struct of three pointers and one size: three lists of one length"}
+  },
+  "helpers": {
+    "marshal": ["glfw_handle_ptr", "glfw_gamma_from", "glfw_list_count", "glfw_images_from"],
+    "translate": []
+  },
+  "sites": {
+    "glfw-released-handle": {"kind": "refusal", "outcome": 1, "probe": "tests/Probes/ReleasedHandleTest.php"},
+    "glfw-icon-pixels-length": {"kind": "refusal", "outcome": 1, "probe": "tests/Probes/IconTest.php"},
+    "glfw-list-count": {"kind": "refusal", "outcome": 1, "probe": "tests/Probes/IconTest.php"}
+  },
+  "typemap": {
+    "VkInstance": ["int"],
+    "VkPhysicalDevice": ["int"],
+    "VkSurfaceKHR*": ["int"],
+    "VkAllocationCallbacks*": ["int"],
+    "PFN_vkGetInstanceProcAddr": ["int"],
+    "GLFWglproc": ["int"],
+    "GLFWvkproc": ["int"],
+    "id": ["int"],
+    "CGDirectDisplayID": ["int"],
+    "Display*": ["int"],
+    "Window": ["int"],
+    "RRCrtc": ["int"],
+    "RROutput": ["int"],
+    "wl_display*": ["int"],
+    "wl_surface*": ["int"],
+    "wl_output*": ["int"],
+    "GLXContext": ["int"],
+    "GLXWindow": ["int"],
+    "EGLDisplay": ["int"],
+    "EGLContext": ["int"],
+    "EGLSurface": ["int"],
+    "GLFWimage*": ["array"],
+    "VkResult": ["int"]
+  }
+}

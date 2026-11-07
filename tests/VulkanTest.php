@@ -33,17 +33,20 @@ it('makes a Vulkan surface on a window, which the device can present to', functi
 
     expect($result)->toBe(VK_SUCCESS)
         ->and($surface)->toBeGreaterThan(0)
-        ->and(glfwGetPhysicalDevicePresentationSupport($instance->pointer(), $devices[0]->pointer(), 0))->toBeTrue();
+        ->and(glfwGetPhysicalDevicePresentationSupport($instance->pointer(), $devices[0]->pointer(), 0))->toBe(GLFW_TRUE);
 
     vkDestroySurfaceKHR($instance, VkSurfaceKHR::fromPointer($surface), null);
     glfwDestroyWindow($window);
     vkDestroyInstance($instance, null);
 });
 
-it('refuses a null instance', function (): void {
+it('passes a null instance to GLFW, which answers VK_ERROR_INITIALIZATION_FAILED', function (): void {
     $window = hiddenWindow();
+    glfwGetError();
 
-    expect(fn () => glfwCreateWindowSurface(0, $window, 0, $surface))->toThrow(ValueError::class, 'must be a VkInstance, not 0');
+    expect(glfwCreateWindowSurface(0, $window, 0, $surface))->not->toBe(0)
+        ->and($surface)->toBe(0);
 
+    glfwGetError();
     glfwDestroyWindow($window);
 });

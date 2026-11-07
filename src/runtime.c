@@ -70,26 +70,33 @@ void *glfw_handle_ptr(zend_object *obj, uint32_t arg_num)
 {
 	void *ptr = glfw_handle_from(obj)->ptr;
 
-	if (ptr == NULL) {
+	/* GLFW checks a window or monitor only with assert(), compiled out of a release GLFW, then dereferences it. */
+	if (!GLFW_PROBE_OFF("glfw-released-handle") && ptr == NULL) {
 		const char *what = obj->ce == glfw_ce_GLFWmonitor ? "has been disconnected" : "has been destroyed";
-		if (arg_num == 0) {
-			zend_value_error("%s %s", ZSTR_VAL(obj->ce->name), what);
-		} else {
-			zend_argument_value_error(arg_num, "%s %s", ZSTR_VAL(obj->ce->name), what);
-		}
+		zend_argument_value_error(arg_num, "%s %s", ZSTR_VAL(obj->ce->name), what); /* binding:glfw-released-handle */
 	}
 
 	return ptr;
 }
 
-bool glfw_optional_ptr(zend_object *obj, uint32_t arg_num, void **out)
+#ifdef GLFW_PROBES
+bool glfw_probe_off(const char *id)
 {
-	if (obj == NULL) {
-		*out = NULL;
-		return true;
+	const char *off = getenv("GLFW_PROBE_OFF");
+
+	return off != NULL && strcmp(off, id) == 0;
+}
+#endif
+
+bool glfw_list_count(zend_long given, uint32_t length, uint32_t count_arg, uint32_t list_arg)
+{
+	/* GLFW reads count elements of the native array built from the list. */
+	if (!GLFW_PROBE_OFF("glfw-list-count") && (given < 0 || (zend_ulong) given > length)) {
+		zend_argument_value_error(count_arg, "must be between 0 and the length of argument #%u ($%s)", list_arg, get_active_function_arg_name(list_arg)); /* binding:glfw-list-count */
+		return false;
 	}
-	*out = glfw_handle_ptr(obj, arg_num);
-	return *out != NULL;
+
+	return true;
 }
 
 void glfw_release_ptr(void *ptr)
@@ -160,6 +167,12 @@ static void glfw_unset_native_callbacks(GLFWwindow *window)
 	glfwSetWindowMaximizeCallback(window, NULL);
 	glfwSetFramebufferSizeCallback(window, NULL);
 	glfwSetWindowContentScaleCallback(window, NULL);
+	glfwSetKeyCallback(window, NULL);
+	glfwSetCharCallback(window, NULL);
+	glfwSetMouseButtonCallback(window, NULL);
+	glfwSetCursorPosCallback(window, NULL);
+	glfwSetCursorEnterCallback(window, NULL);
+	glfwSetScrollCallback(window, NULL);
 }
 
 void glfw_callbacks_drop_all(bool unset_native)

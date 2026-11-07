@@ -17,7 +17,13 @@ it('creates a window from hints, titles it, and destroys it', function (): void 
 
     glfwDestroyWindow($window);
     expect(fn () => glfwGetWindowTitle($window))->toThrow(ValueError::class, 'GLFWwindow has been destroyed')
-        ->and(fn () => $window->pointer())->toThrow(ValueError::class, 'GLFWwindow has been destroyed');
+        ->and($window->pointer())->toBe(0)
+        ->and(GLFWwindow::fromPointer(0))->toBeNull();
+
+    // GLFW takes NULL here: destroying nothing, and no current context.
+    glfwDestroyWindow($window);
+    glfwMakeContextCurrent($window);
+    expect(glfwGetCurrentContext())->toBeNull();
 });
 
 it('opens where the position hints say', function (): void {
@@ -157,11 +163,11 @@ it('makes a transparent framebuffer when hinted', function (): void {
 it('raises and lowers the should-close flag', function (): void {
     $window = hiddenWindow();
 
-    expect(glfwWindowShouldClose($window))->toBeFalse();
-    glfwSetWindowShouldClose($window, true);
-    expect(glfwWindowShouldClose($window))->toBeTrue();
-    glfwSetWindowShouldClose($window, false);
-    expect(glfwWindowShouldClose($window))->toBeFalse();
+    expect(glfwWindowShouldClose($window))->toBe(GLFW_FALSE);
+    glfwSetWindowShouldClose($window, GLFW_TRUE);
+    expect(glfwWindowShouldClose($window))->toBe(GLFW_TRUE);
+    glfwSetWindowShouldClose($window, GLFW_FALSE);
+    expect(glfwWindowShouldClose($window))->toBe(GLFW_FALSE);
 
     glfwDestroyWindow($window);
 });
@@ -191,13 +197,14 @@ it('takes a window icon where the platform has one', function (): void {
     $window = hiddenWindow();
     glfwGetError();
 
-    glfwSetWindowIcon($window, [new GLFWimage(2, 2, str_repeat("\xff\x00\x00\xff", 4)), new GLFWimage(1, 1, "\x00\xff\x00\xff")]);
+    glfwSetWindowIcon($window, 2, [new GLFWimage(2, 2, str_repeat("\xff\x00\x00\xff", 4)), new GLFWimage(1, 1, "\x00\xff\x00\xff")]);
     $error = glfwGetError();
-    glfwSetWindowIcon($window, []);
+    glfwSetWindowIcon($window, 0, []);
 
     expect($error)->toBe(PHP_OS_FAMILY === 'Darwin' || onWayland() ? GLFW_FEATURE_UNAVAILABLE : GLFW_NO_ERROR)
-        ->and(fn () => glfwSetWindowIcon($window, [new GLFWimage(2, 2, 'short')]))->toThrow(ValueError::class, '4 x width x height bytes')
-        ->and(fn () => glfwSetWindowIcon($window, ['not an image']))->toThrow(TypeError::class, 'must be a list of GLFWimage');
+        ->and(fn () => glfwSetWindowIcon($window, 1, [new GLFWimage(2, 2, 'short')]))->toThrow(ValueError::class, '4 x width x height bytes')
+        ->and(fn () => glfwSetWindowIcon($window, 2, [new GLFWimage(1, 1, "\x00\xff\x00\xff")]))->toThrow(ValueError::class, 'must be between 0 and the length of argument #3 ($images)')
+        ->and(fn () => glfwSetWindowIcon($window, 1, ['not an image']))->toThrow(TypeError::class, 'must be a list of GLFWimage');
 
     glfwGetError();
     glfwDestroyWindow($window);
@@ -215,10 +222,11 @@ it('answers null for a window GLFW cannot make', function (): void {
     glfwDefaultWindowHints();
 });
 
-it('refuses ints past 32 bits', function (): void {
-    $window = hiddenWindow();
+it('converts GLFW_ANY_POSITION, past PHP\'s 32-bit range, to the C int GLFW reads', function (): void {
+    glfwWindowHint(GLFW_POSITION_X, GLFW_ANY_POSITION);
+    glfwWindowHint(GLFW_POSITION_Y, GLFW_ANY_POSITION);
 
-    expect(fn () => glfwSetWindowSize($window, 1 << 40, 10))->toThrow(ValueError::class, 'must be a 32-bit int');
+    expect(glfwGetError())->toBe(GLFW_NO_ERROR);
 
-    glfwDestroyWindow($window);
+    glfwDefaultWindowHints();
 });

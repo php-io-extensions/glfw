@@ -76,17 +76,17 @@ it('reads the gamma ramp, sets gamma, and puts the ramp back', function (): void
         ->and(glfwGetGammaRamp($monitor)->red)->toBe($saved->red);
 });
 
-it('refuses a ramp it cannot hand over', function (Closure $ramp, string $message): void {
-    expect(fn () => glfwSetGammaRamp(glfwGetPrimaryMonitor(), $ramp()))->toThrow(ValueError::class, $message);
-})->with([
-    'channels of unequal length' => [fn () => new GLFWgammaramp([0, 1], [0], [0, 1]), 'one length'],
-    'a value past 16 bits' => [fn () => new GLFWgammaramp([70000], [0], [0]), 'from 0 to 65535 in $red'],
-    'no values' => [fn () => new GLFWgammaramp(), 'at least one value per channel'],
-]);
+// A C GLFWgammaramp has one size for its three arrays.
+it('refuses channels of unequal length, which have no one size', function (): void {
+    expect(fn () => glfwSetGammaRamp(glfwGetPrimaryMonitor(), new GLFWgammaramp([0, 1], [0], [0, 1])))->toThrow(ValueError::class, 'one length')
+        ->and(fn () => glfwSetGammaRamp(glfwGetPrimaryMonitor(), new GLFWgammaramp(['x'], [0], [0])))->toThrow(TypeError::class, 'must hold ints in $red');
+});
 
-it('stores and clears the monitor callback', function (): void {
-    glfwSetMonitorCallback(function (GLFWmonitor $monitor, int $event): void {});
-    glfwSetMonitorCallback(null);
+it('stores and clears the monitor callback, returning the one it replaces', function (): void {
+    $first = function (GLFWmonitor $monitor, int $event): void {};
+
+    expect(glfwSetMonitorCallback($first))->toBeNull()
+        ->and(glfwSetMonitorCallback(null))->toBe($first);
 
     expect(fn () => glfwSetMonitorCallback('no such function'))->toThrow(TypeError::class, 'must be a valid callback or null');
 });

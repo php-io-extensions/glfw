@@ -3,7 +3,17 @@ PHP_ARG_ENABLE([glfw],
   [AS_HELP_STRING([--enable-glfw], [Enable the GLFW 3.4 bindings])],
   [no])
 
+PHP_ARG_ENABLE([glfw-probes],
+  [whether to build the glfw probe switch],
+  [AS_HELP_STRING([--enable-glfw-probes],
+    [Build the GLFW_PROBE_OFF switch that tests/Probes drives: env GLFW_PROBE_OFF=<site id> turns that kept refusal off. Never for a release build])],
+  [no],
+  [no])
+
 if test "$PHP_GLFW" != "no"; then
+  if test "$PHP_GLFW_PROBES" != "no"; then
+    AC_DEFINE([GLFW_PROBES], [1], [Kept refusal sites can be turned off through env GLFW_PROBE_OFF])
+  fi
   PKG_CHECK_MODULES([GLFW], [glfw3 >= 3.4])
   PHP_EVAL_INCLINE([$GLFW_CFLAGS])
   PHP_EVAL_LIBLINE([$GLFW_LIBS], [GLFW_SHARED_LIBADD])
