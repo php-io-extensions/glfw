@@ -5,7 +5,7 @@ description: What each windowing system leaves out, as GLFW 3.4 reports it, meas
 resource: tests/
 tags: [glfw, wayland, cocoa, platforms]
 status: draft
-generated: { by: claude-fable/5.1, at: 2026-10-08T00:00:00Z }
+generated: { by: claude-sonnet/5.5, at: 2026-11-08T14:30:00Z }
 sources:
   - id: tests
     resource: tests/
@@ -30,6 +30,6 @@ sources:
 * Size limits / aspect bind the user's resizing; programmatic `glfwSetWindowSize` ignores them (as AppKit). Read back through ext-appkit `contentMinSize`/`contentMaxSize`/`contentAspectRatio`.
 * Resizes call back synchronously, inside `glfwSetWindowSize`.
 * Focus: macOS refuses activation while the user works in another app.
-* Vulkan: Homebrew's loader is not on dyld's path; `glfwInitVulkanLoader(vkGetInstanceProcAddr)` before init. ext-vulkan exports no such address yet; tests take it with FFI from `vk_loader_path()`.
+* Vulkan: Homebrew's loader is not on dyld's path; `glfwInitVulkanLoader(vkGetInstanceProcAddr)` before init. tests take the address from ext-vulkan: `vkGetInstanceProcAddr(null, 'vkGetInstanceProcAddr')` (`vulkanLoader()` in `tests/Pest.php`).
 
 [^tests]: Pest suite, platform branches

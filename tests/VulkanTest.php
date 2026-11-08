@@ -5,7 +5,7 @@ declare(strict_types=1);
 beforeEach(function (): void {
     glfw();
     if (! glfwVulkanSupported()) {
-        $this->markTestSkipped('no Vulkan loader reached: needs ext-vulkan and FFI to hand GLFW the loader');
+        $this->markTestSkipped('no Vulkan loader reached: needs ext-vulkan (vkGetInstanceProcAddr) to hand GLFW the loader');
     }
 });
 

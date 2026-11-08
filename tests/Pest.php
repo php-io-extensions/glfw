@@ -7,17 +7,12 @@ if (! extension_loaded('glfw')) {
 }
 
 /**
- * The loader's vkGetInstanceProcAddr address, 0 when ext-vulkan or FFI is missing. GLFW searches the
+ * The loader's vkGetInstanceProcAddr address, 0 when ext-vulkan is not loaded. GLFW searches the
  * dynamic linker's path for the loader, which Homebrew's is not on: the address is how it finds it.
  */
 function vulkanLoader(): int
 {
-    if (! function_exists('vk_loader_path') || ! extension_loaded('ffi') || vk_loader_path() === null) {
-        return 0;
-    }
-    $ffi = FFI::cdef('void *vkGetInstanceProcAddr(void *instance, const char *name);', vk_loader_path());
-
-    return $ffi->cast('uintptr_t', $ffi->vkGetInstanceProcAddr)->cdata;
+    return function_exists('vkGetInstanceProcAddr') ? vkGetInstanceProcAddr(null, 'vkGetInstanceProcAddr') : 0;
 }
 
 /** macOS and Linux signal numbers a kept refusal's probe dies by. */

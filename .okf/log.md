@@ -1,5 +1,9 @@
 # Log
 
+## 2026-11-08
+
+* **Tests: the Vulkan loader address comes from ext-vulkan.** `vulkanLoader()` in `tests/Pest.php` returns `vkGetInstanceProcAddr(null, 'vkGetInstanceProcAddr')` (ext-vulkan 26d839e), the address `glfwInitVulkanLoader()` takes; 0 without ext-vulkan, and `tests/VulkanTest.php` skips then. Not run: the suite opens windows (GUI, waits for Angel's go) and needs the rebuilt ext-vulkan installed.
+
 ## 2026-11-06
 
 * **`glfwGetKey`** (glfw3.h:4901). `glfwGetKey(GLFWwindow $window, int $key): int` answers `GLFW_PRESS` or `GLFW_RELEASE`, the last state GLFW reported for the key to the window (`GLFW_REPEAT` only ever reaches a key callback). The released-window case is the existing `glfw-released-handle` site: no new `bindings.json` entry. A bad key (`GLFW_KEY_UNKNOWN`) is `GLFW_INVALID_ENUM` through `glfwGetError()` and reads `GLFW_RELEASE`. Limit, GLFW's own: it is the state GLFW has been told, so a modifier already held when the window gained focus may read `GLFW_RELEASE` until GLFW sees its next event. `SurfaceTest` function count 96 (Linux 104). `KeyStateTest` opens a hidden window (not run). 108 / 149.
